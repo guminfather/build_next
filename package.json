@@ -1,0 +1,52 @@
+{
+  "name": "coupon-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "axios": "^1.8.4",
+    "cookies-next": "^5.1.0",
+    "datatables.net": "^2.2.2",
+    "datatables.net-buttons": "^3.2.3",
+    "datatables.net-dt": "^2.2.2",
+    "daterangepicker": "^3.1.0",
+    "file-saver": "^2.0.5",
+    "jquery": "^3.7.1",
+    "jsonwebtoken": "^9.0.2",
+    "jwt-decode": "^4.0.0",
+    "moment": "^2.30.1",
+    "next": "^15.2.4",
+    "next-universal-cookie": "^3.1.0",
+    "qrcode.react": "^4.2.0",
+    "qs": "^6.14.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "xlsx": "^0.18.5",
+    "xlsx-js-style": "^1.2.0",
+    "xml2js": "^0.6.2",
+    "zustand": "^5.0.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/datatables.net": "^1.12.3",
+    "@types/file-saver": "^2.0.7",
+    "@types/jquery": "^3.5.32",
+    "@types/jqueryui": "^1.12.24",
+    "@types/jwt-decode": "^3.1.0",
+    "@types/moment": "^2.13.0",
+    "@types/node": "^20",
+    "@types/qrcode.react": "^3.0.0",
+    "@types/qs": "^6.9.18",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/xlsx": "^0.0.36",
+    "@types/xml2js": "^0.4.14",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
