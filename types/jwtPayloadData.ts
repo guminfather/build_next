@@ -1,5 +1,5 @@
 export interface JwtPayloadData {
     subject: string;
-    issueTime: number;
+    issueTime: number; 
     expirationTime: number;
 }

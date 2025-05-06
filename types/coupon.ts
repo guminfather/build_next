@@ -1,5 +1,5 @@
 
-export interface Coupon {
+export interface Coupon { 
     partnerId: string; //사업자 아이디
     couponName: string;
     discountRate: number;

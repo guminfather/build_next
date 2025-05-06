@@ -1,4 +1,4 @@
-export interface CouponInfo {
+export interface CouponInfo { 
     id: number;
     businessId: number;        // 상호코드 (business_info.id 참조)
     businessName?: string;     // 상호명 (display용)

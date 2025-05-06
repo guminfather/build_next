@@ -1,4 +1,4 @@
-export interface Business {
+export interface Business { 
     id: number;                // 일련번호
     businessId: string;        // 상호아이디
     businessPw: string;        // 상호비밀번호
