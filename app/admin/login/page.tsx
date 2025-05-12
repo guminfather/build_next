@@ -11,7 +11,7 @@ import { saveAdminTokens } from '@/lib/adminAuth';
 export default function LoginAdmin() {
 
     let router = useRouter()
-    console.log('API BASE URL:', process.env.NEXT_PUBLIC_API_BASE_URL);
+    //console.log('관리자 > API BASE URL:', process.env.NEXT_PUBLIC_API_BASE_URL);
 
     var [userId, setUserId] = useState("");
     var [userPw, setUserPw] = useState("");

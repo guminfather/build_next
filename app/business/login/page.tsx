@@ -12,7 +12,7 @@ import { setCookieName } from '@/lib/cookies';
 export default function LoginBusiness() {
 
     let router = useRouter()
-    //console.log('API BASE URL:', process.env.NEXT_PUBLIC_API_BASE_URL);
+    //console.log('사업자 > API  BASE URL:', process.env.NEXT_PUBLIC_API_BASE_URL);
 
     var [userId, setUserId] = useState("");
     var [userPw, setUserPw] = useState("");

@@ -2,8 +2,8 @@ import axios from "axios";
 import { getBusinessAccessToken } from '@/lib/businessAuth';
 import { getAdminAccessToken } from '@/lib/adminAuth';
 
-//const API_BASE_URL = 'http://localhost:8080'; // API 서버 주소
-const API_BASE_URL = 'http://1.234.38.137:8080'; // API 서버 주소
+//const API_BASE_URL = 'http://localhost:8080'; // API 서버 주소 (local)
+const API_BASE_URL = 'http://1.234.38.137:8080'; // API 서버 주소 (실서버)
 
 // axios 인스턴스 생성
 const axiosInstance = axios.create({

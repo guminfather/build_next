@@ -88,7 +88,9 @@ export const fetchBusinessByBusinessId = async (businessId: string) => {
 // 토큰 재발급 (refreshToken 사용, 사업자,관리자 같이 사용 - 분리해주고 위와같은 axiosInstance 를 사용하자.)
 export const refreshAccessToken = async (refreshToken: string) => {
     try {
-        const res = await axios.post(`http://localhost:8080/api/auth/newToken`,{}, {
+        //const res = await axios.post(`http://localhost:8080/api/auth/newToken`,{}, {
+        const res = await axios.post(`http://1.234.38.137:8080/api/auth/newToken`,{}, {
+            
             headers: {
                 Authorization: `Bearer ${refreshToken}`,
                 'Content-Type': 'application/json',
