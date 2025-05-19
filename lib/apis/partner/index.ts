@@ -89,14 +89,15 @@ export const updatePartner = async (newPartner: Partner) => {
         return { success: false, message };
     }
 };
-/*사업자 탈퇴
-export const deletePartner = async (partnerId: String) => {
+
+//사업자 탈퇴
+export const deletePartner = async () => {
     try {
-        const res = await axiosInstance.delete(`/api/partner/${partnerId}`);
-        return { success: true, value: "사업자 정보 삭제 성공" };
+        const res = await axiosInstance.delete(`/api/partner`);
+        return { success: true, value: "사업자 정보 탈퇴처리 성공" };
     } catch (error: any) {
         const message = error.response?.data?.error || "서버 오류가 발생했습니다.";
         console.log("에러메세지 : ", message);
         return { success: false, message };
     }
-};*/
+};

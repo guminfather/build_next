@@ -17,8 +17,7 @@ export default function LoginAdmin() {
     var [userPw, setUserPw] = useState("");
     var [autoLogin, setAutoLogin] = useState(false);
     var [errerTxt, setErrerTxt] = useState(false);
-    var [errerTxt2, setErrerTxt2] = useState(false);
-
+    const [loading, setLoading] = useState(false);
     
     //로그인 아이디 기억하기 이미 체크 되어 있는경우
     useEffect(() => {
@@ -33,11 +32,25 @@ export default function LoginAdmin() {
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
+            setLoading(true)
+            
+            //아이디,비밀번호 입력 요구
+            if (!userId.trim()) {
+				alert('ID를 입력해주세요');
+                setLoading(false)
+                return;
+			}
+            if (!userPw.trim()) {
+				alert('Password를 입력해주세요');
+                setLoading(false)
+                return;
+			}
 
+            
             //로그인 API 호출
             const result = await adminLogin(userId, userPw);
             if (result.success) {
-                alert(`로그인 완료`);
+                //alert(`로그인 완료`);
                 //console.log("* 사업자정보 : ", result.value.partner)  //userId, email,
                 //console.log("* 토큰 : ",  result.value.token)
                 //console.log("* 리플래쉬토큰큰 : ",  result.value.refreshToken)
@@ -45,7 +58,9 @@ export default function LoginAdmin() {
                 setCookieName("cookieAdminId", result.value.adminId, 60 * 60 * 24 * 30); //30일
                 setCookieName("cookieAdminName", "관리자", 60 * 60 * 24 * 30); //30일
             } else {
-                alert(result.message);
+                //alert(result.message);
+                setLoading(false)
+                setErrerTxt(true)
                 return;
             }
 
@@ -58,11 +73,85 @@ export default function LoginAdmin() {
             router.push("/admin/manage");
         } catch (err) {
             alert('로그인 실패');
+            setLoading(false)
         }
     };
     
+    useEffect(() => {
+        //if (document.documentElement) {
+        document.documentElement.setAttribute('data-bs-theme', 'light');
+        //}
+    }, []);
+    
+    
     return (
-        <div>
+    <body id="kt_body" className="app-blank app-blank">    
+        
+        
+    <div className="d-flex flex-column flex-root" id="kt_app_root">
+        <div className="d-flex flex-column flex-lg-row flex-column-fluid">
+            <div className="d-flex flex-lg-row-fluid w-lg-50 bgi-size-cover bgi-position-center" 
+            style={{ backgroundImage: 'url("/images/login/auth-bg.png")' }}>  
+                <div className="d-flex flex-column flex-center p-6 p-lg-10 w-100">
+                    <a href="../../demo1/dist/index.html" className="mb-0 mb-lg-20">
+                        <img alt="Logo" src="/images/logo/default-dark.svg" className="h-40px h-lg-50px" />
+                    </a>
+                    <img className="d-none d-lg-block mx-auto w-300px w-lg-75 w-xl-400px mb-10 mb-lg-20" src="/images/login/auth-screens.png" alt="" />
+                    <h1 className="d-none d-lg-block text-white fs-2qx fw-bold text-center mb-7">HYPER GLOCAL SNS</h1>
+                    <div className="d-none d-lg-block text-white fs-base text-center">On The Real World 1:1 Mapping Virtual Land With Local Contents.</div>
+                </div>
+            </div>
+            <div className="d-flex flex-column flex-lg-row-fluid w-lg-50 p-10">
+                <div className="d-flex flex-center flex-column flex-lg-row-fluid">
+                    <div className="w-lg-500px p-10">
+                        <form onSubmit={handleLogin} className="form w-100" noValidate id="kt_sign_in_form">
+                            <div className="text-center mb-11">
+                                <h1 className="text-dark fw-bolder mb-3">관리자 로그인</h1>
+                                <div className="text-gray-500 fw-semibold fs-6">Administrator Mode</div>
+                            </div>
+                            <div className="fv-row mb-8">
+                                <input type="text" placeholder="ID" name="userId" title="아이디" autoComplete="off" className="form-control bg-transparent" 
+                                value={userId} 
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setUserId(e.target.value) }} />
+                            </div>
+                            <div className="fv-row mb-8">
+                                <input type="password" placeholder="Password" name="userPw" autoComplete="off" className="form-control bg-transparent" 
+                                title="비밀번호" value={userPw}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setUserPw(e.target.value) }} />
+                            </div>
+                            <div className="d-grid mb-10" >
+                                <button type="submit" id="kt_sign_in_submit" className="btn btn-primary" 
+                                    data-kt-indicator={loading?"on" : "off"}>
+                                    <span className="indicator-label">로그인</span>
+                                    <span className="indicator-progress">Please wait...
+                                    <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                </span>
+                                </button>
+                                
+
+                            </div>
+                            {!errerTxt ? "" :
+                                <div>
+                                    <span className="text-danger">아이디(사업자번호) 또는 비밀번호가 잘못 되었습니다. 아이디와 비밀번호를 정확히 입력해 주세요.</span>
+                                </div>
+                            }
+                            
+
+                        </form>
+                    </div>
+                </div>
+                <div className="d-flex flex-center flex-wrap px-5">
+                    <span className="text-muted fw-semibold me-1">Copyright 2025 © <a href="https://keenthemes.com" target="_blank" className="text-gray-800 text-hover-primary">UNDERPIN Inc.</a> All Rights Reserved.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>    
+    );
+}
+
+
+/*
             <p>관리자 로그인 페이지 입니다.</p>
             <Link href="/admin/">관리자 메인 페이지 이동</Link>
             <form onSubmit={handleLogin}>
@@ -92,10 +181,5 @@ export default function LoginAdmin() {
             </form>
 
             <p></p>
-        </div>
-    );
-}
-
-
-
+            */
 

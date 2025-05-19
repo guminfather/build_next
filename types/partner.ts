@@ -13,7 +13,6 @@ export interface Partner {
     
 }  
 
-
 export interface PartnerRequest extends Partner {
     
 }

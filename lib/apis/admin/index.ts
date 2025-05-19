@@ -71,6 +71,18 @@ export const fetchAdminCouponDetail = async (id: string) => {
 
 //---------------------------------------------------------------------------------------
 
+// 사업자리스트 전체
+export const fetchPartnersAll = async () => {
+    try {
+        const res = await axiosInstance.get(`/api/admin/partnerIds`);
+        return { success: true, value: res.data };
+    } catch (error: any) {
+        const message = error.response?.data?.error || "서버 오류가 발생했습니다.";
+        console.log("에러메세지 : ", message);
+        return { success: false, message };
+    }
+};
+
 // 사업자 리스트
 export const fetchPartners = async (newSearch: Search) => {
     try {
@@ -106,11 +118,12 @@ export const updatePartner = async (newPartner: Partner) => {
         return { success: false, message };
     }
 };
-//사업자 삭제
+
+//사업자 탈퇴
 export const deletePartner = async (partnerId: String) => {
     try {
         const res = await axiosInstance.delete(`/api/admin/partner/${partnerId}`);
-        return { success: true, value: "사업자 정보 삭제 성공" };
+        return { success: true, value: "사업자 정보 탈퇴처리 성공" };
     } catch (error: any) {
         const message = error.response?.data?.error || "서버 오류가 발생했습니다.";
         console.log("에러메세지 : ", message);
@@ -132,7 +145,8 @@ export const fetchAdminPartnerDetail = async (partnerId: string) => {
 };
 
 
-// 관리자 사업자리스트 (엑셀 다운로드용 전체 리스트)
+
+/*// 관리자 사업자리스트 (엑셀 다운로드용 전체 리스트)
 export const fetchBusinessesAll = async (params: {
     name: string;
     startDate: string;
@@ -150,4 +164,4 @@ export const fetchBusinessesAll = async (params: {
         console.log("에러메세지 : ", message);
         throw new Error(message); // 실패시 에러 throw (엑셀 다운로드 같은 경우는 실패를 알려야 하니까)
     }
-};
+};*/

@@ -8,47 +8,64 @@ interface Props {
     total: number;
     currentPage: number;
     pageSize: number;
-    name: string;
+    searchText: string;
+    searchType: string;
     startDate: string;
     endDate: string;
-    sort : string;
 }
 
-
-
-
-export default function CouponTable({ coupons, total, currentPage, pageSize, name, startDate, endDate, sort  }: Props) {
+export default function CouponTable({ coupons, total, currentPage, pageSize, searchText, searchType, startDate, endDate }: Props) {
     return (
-        <div>
-            <div className="mb-2">총 {total}개</div>
-            <table className="w-full border">
+        <>
+            <table className="table align-middle table-row-dashed fs-6 gy-5" id="kt_ecommerce_report_views_table">
                 <thead>
-                    <tr className="bg-gray-100">
-                        <th>NO</th>
-                        <th>사업자</th>
-                        <th>쿠폰명</th>
-                        <th>사용기간</th>
-                        <th>발급기간</th>
-                        <th>사용여부</th>
+                    <tr className="text-gray-400 fw-bold fs-7 text-uppercase gs-0">
+                        <th className="w-10px pe-2">
+                            <div className="form-check form-check-sm form-check-custom form-check-solid me-3">
+                                <input className="form-check-input" type="checkbox" data-kt-check="true" data-kt-check-target="#kt_ecommerce_report_views_table .form-check-input" value="1" />
+                            </div>
+                        </th>
+                        <th className="min-w-200px text-center">상호</th>
+                        <th className="min-w-300px text-center">쿠폰명</th>
+                        <th className="min-w-70px text-center">할인율</th>
+                        <th className="min-w-200px text-center">기간</th>
+                        <th className="min-w-80px text-center">다운로드 수</th>
+                        <th className="min-w-80px text-center">사용 수</th>
+                        <th className="min-w-100px text-center">상태</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody className="fw-semibold text-gray-600">
                     {coupons.map((m, i) => (
-                        <tr key={i}>
-                            <td>{(currentPage - 1) * pageSize + i + 1}</td>
-                            <td>{m.partnerName}</td>
-                            <td>
-                                <Link href={{pathname: `./${m.couponId}`,
-                                    query: { name, startDate, endDate, page: currentPage, sort }, }}
-                                >{m.couponName}</Link>
-                            </td>
-                            <td>{m.couponName}</td>
-                            <td>{m.couponName}</td>
-                            <td>{m.couponName}</td>
-                        </tr>
+                    <tr className="text-center" key={i}>
+                        <td>
+                            <div className="form-check form-check-sm form-check-custom form-check-solid">
+                                <input className="form-check-input" type="checkbox" value="1" />
+                                {/*(currentPage - 1) * pageSize + i + 1*/}
+                            </div>
+                        </td>
+                        <td className="text-start">
+                            {m.partnerName}
+                        </td>
+                        <td className="text-start">
+                            <Link className="text-hover-primary text-gray-600" 
+                                    href={{
+                                        pathname: `./${m.couponId}`,
+                                        query: { searchText, searchType, startDate, endDate, page: currentPage, pageSize},
+                                    }}
+                                    >{m.couponName}</Link>
+                        </td>
+                        <td>{m.discountRate}%</td>
+                        <td>{m.usageStartDate}-{m.usageEndDate}</td>
+                        <td data-bs-target="license">32</td>{/*사용수*/}
+                        <td>{/*사용수*/}20</td>
+                        <td>
+                            {/*<span className="badge fw-bold me-auto px-4 py-3 badge-light  ">기간만료 </span>*/}
+                            <span className="badge fw-bold me-auto px-4 py-3 badge-light-primary ">진행중</span>
+                        </td>
+                    </tr>
                     ))}
                 </tbody>
             </table>
-        </div>
+        </>
     );
 }

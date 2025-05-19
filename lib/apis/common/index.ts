@@ -12,6 +12,8 @@ import axiosInstance from '@/lib/apis/axiosInstance';
 
 
 const API_BIZNO_URL = 'https://bizno.net'; // 사업자번호 API 주소
+const API_BASE_URL = 'http://localhost:8080'; // API 서버 주소 (local)
+//const API_BASE_URL = 'http://1.234.38.137:8080'; // API 서버 주소 (실서버)
 
 // 사업자 아이디 존재 여부 확인
 export const fetchBusinessIdCheck = async (id: string) => {
@@ -88,9 +90,7 @@ export const fetchBusinessByBusinessId = async (businessId: string) => {
 // 토큰 재발급 (refreshToken 사용, 사업자,관리자 같이 사용 - 분리해주고 위와같은 axiosInstance 를 사용하자.)
 export const refreshAccessToken = async (refreshToken: string) => {
     try {
-        //const res = await axios.post(`http://localhost:8080/api/auth/newToken`,{}, {
-        const res = await axios.post(`http://1.234.38.137:8080/api/auth/newToken`,{}, {
-            
+        const res = await axios.post(`${API_BASE_URL}/api/auth/newToken`,{}, {
             headers: {
                 Authorization: `Bearer ${refreshToken}`,
                 'Content-Type': 'application/json',

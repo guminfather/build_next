@@ -1,11 +1,15 @@
 export interface Search {
-    name: string;
-    startDate: string;
-    endDate: string;
-    sort: string;
     page: number;
     pageSize: number;
+    searchText: string;
+    searchType: string;
 }
+
+export interface SearchCoupon extends Search {
+    startDate: string;
+    endDate: string;
+}
+
 
 
 export interface SearchRequest extends Search {

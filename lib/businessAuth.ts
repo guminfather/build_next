@@ -21,6 +21,10 @@ export const removeBusinessTokensCookies = () => {
 export const getCookieBusinessId = () => {
     return getCookieName('cookieBusinessId');
 };
+//partnerName
+export const getCookieBusinessName = () => {
+    return getCookieName('cookieBusinessName');
+};
 
 //AccessToken
 export const getBusinessAccessToken = () => {
