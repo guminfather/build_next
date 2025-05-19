@@ -4,6 +4,7 @@
 // 기존
 import * as XLSX from 'xlsx-js-style';
 import { saveAs } from 'file-saver';
+/*
 import { fetchBusinessesAll } from '@/lib/apis/admin';
 
 
@@ -91,3 +92,4 @@ export default function BusinessExcel<T>({ name, startDate, endDate, sort }: Pro
         </button>
     );
 }
+    */

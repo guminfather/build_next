@@ -1,20 +1,9 @@
 // next.config.ts
 
-/*
-// @ts-ignore
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  // @ts-ignore
-  experimental: {
-    appDir: true,
-  },
-};
-*/
+/** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    appDir: true,
-  },
+  // 불필요한 experimental 설정 제거
+  // 필요한 다른 설정은 여기에 추가 가능
 };
 
 export default nextConfig;
