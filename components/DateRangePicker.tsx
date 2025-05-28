@@ -2,8 +2,8 @@
 import { useState } from "react";
 import { DateRange, Range } from "react-date-range";
 import { format, startOfToday, subDays, startOfMonth, endOfMonth, addMonths } from "date-fns";
-import "react-date-range/dist/styles.css";
-import "react-date-range/dist/theme/default.css";
+//import "react-date-range/dist/styles.css";
+//import "react-date-range/dist/theme/default.css";
 import { parse } from "date-fns";
 
 interface Props {

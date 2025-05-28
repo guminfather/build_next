@@ -2,6 +2,8 @@
 import Link from "next/link";
 import "./css/plugins.bundle.css";
 import "./css/style.bundle.css";
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 
 export default function RootLayout({
     children,
