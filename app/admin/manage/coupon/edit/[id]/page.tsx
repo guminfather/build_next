@@ -1,13 +1,12 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, use, useRef } from 'react';
-import { fetchAdminCouponDetail, updateCoupon, fetchPartnersAll } from '@/lib/apis/admin';
-import { CouponResponse, CouponRequest } from '@/types/coupon';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Partner } from '@/types/partner';
-import { getCookieName } from '@/lib/cookies';
-
-//import { saveTokens } from '@/lib/businessAuth';
+import { CouponResponse, CouponRequest, CouponProduct } from '@/types/coupon';
+import { hasText } from '@/utils/common';
+import { dateRegex, discountRegex } from '@/utils/regex';
+import { fetchAdminCouponDetail, updateCoupon, fetchPartnersAll, deleteCoupon } from '@/lib/apis/admin';
 
 import "../../../../../css/fullcalendar.bundle.css";
 import "../../../../../css/datatables.bundle.css";
@@ -23,12 +22,59 @@ export default function AdminCouponEdit({ params }: { params: Promise<{ id: stri
 	const searchParams = useSearchParams();
 
 	const nameInputRef = useRef<HTMLInputElement>(null);
-	const [coupon, setCoupon] = useState<CouponResponse | null>(null);
 	const [partners, setPartners] = useState<Partner[]>([]);
+	const [coupon, setCoupon] = useState<CouponResponse | null>(null);
+	const [couponProducts, setCouponProducts] = useState<CouponProduct[]>([])
 
-	//정규 표현식
-	const dateRegex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
-	const discountRegex = /^(100|[1-9]?[0-9])$/;
+	//쿠폰상품에 재배열 //console.log("상품 등록 내용 (productNames) :  ", names);
+	const couponProductUpdate = () => {
+		const names = couponProducts.map(p => p.name.trim()).filter(name => name.length > 0)
+		setCoupon(prev => ({ ...prev!, productNames: names }))
+	}
+	//상품 추가 
+	const addProduct = () => {
+		/*
+		if (couponProducts.length >= 5) {
+			alert("최대 5개까지 입력 가능합니다.")
+			return
+		}*/
+		const newProduct: CouponProduct = {
+			id: Date.now(),
+			name: ''
+		}
+		setCouponProducts([...couponProducts, newProduct])
+		couponProductUpdate()
+	}
+	//상품 삭제 
+	const removeProduct = (id: number) => {
+		setCouponProducts(couponProducts.filter(product => product.id !== id))
+		couponProductUpdate()
+	}
+	//상품 입력 
+	const handleProductChange = (id: number, value: string) => {
+		console.log("id, value : ", id + "," + value)
+		setCouponProducts(couponProducts.map(product =>
+			product.id === id ? { ...product, name: value } : product
+		))
+		couponProductUpdate()
+	}
+
+	//쿠폰삭제
+	const handleDelete = async () => {
+		if (!confirm(" 쿠폰을 정말 삭제 하시겠습니까? ")) return;
+		try {
+			const result = await deleteCoupon(Number(id));
+			if (result.success) {
+				alert(`쿠폰을 삭제 하였습니다.`);
+				router.push(`../list`); //페이지 이동
+			} else {
+				alert(result.message);
+				return;
+			}
+		} catch (error) {
+			console.error("데이터 삭제 실패:", error);
+		}
+	};
 
 	//useEffect
 	useEffect(() => {
@@ -36,6 +82,14 @@ export default function AdminCouponEdit({ params }: { params: Promise<{ id: stri
 			try {
 				const result = await fetchAdminCouponDetail(id);
 				setCoupon(result.value);
+
+				// 문자열 배열을 Product[] 형태로 변환
+				const converted = result.value.productNames.map((name: string, index: number) => ({
+					id: Date.now() + index, // 고유 ID 생성
+					name
+				}))
+				setCouponProducts(converted)
+
 			} catch (error) {
 				console.error("데이터 가져오기 실패:", error);
 			}
@@ -63,7 +117,14 @@ export default function AdminCouponEdit({ params }: { params: Promise<{ id: stri
 	const handleSubmit = async () => {
 		try {
 			//nameInputRef.current?.focus(); /*********** 이름에 포커스 ******************* */
-			/*
+			if (!coupon?.partnerId || '') {
+				alert('사업자를 선택해 주세요.');
+				return false;
+			}
+			if (!hasText(coupon?.couponName || '')) {
+				alert('쿠폰명을 입력해주세요.');
+				return;
+			}
 			if (!dateRegex.test(coupon?.usageStartDate || '')) { //시작일 검증
 				alert('사용기간 형식이 올바르지 않습니다.');
 				return;
@@ -80,12 +141,19 @@ export default function AdminCouponEdit({ params }: { params: Promise<{ id: stri
 				alert('발급기간 형식이 올바르지 않습니다.');
 				return;
 			}
-			
-			if (!discountRegex.test(typeof Number(coupon?.discountRate))) { //할인율
-				alert('형식이 올바르지 않습니다.');
+			if (!discountRegex.test(String(Number(coupon?.discountRate || 0)))) { //할인율
+				alert('할인율은 (0~100) 입니다. 형식이 올바르지 않습니다.');
 				return;
 			}
-			*/
+
+			/*
+			//상품 최소 한개 이상 입력
+			const names = couponProducts.map(p => p.name.trim()).filter(name => name.length > 0)
+			if (names.length === 0) {
+				alert("최소 한 개 이상의 상품명을 입력해주세요.")
+				return
+			}*/
+
 			const newCoupon: CouponRequest = {
 				couponId: coupon?.couponId || 0,
 				partnerId: coupon?.partnerId || '',
@@ -100,17 +168,16 @@ export default function AdminCouponEdit({ params }: { params: Promise<{ id: stri
 				isUsable: coupon?.isUsable ? coupon.isUsable : 'USABLE', // 수정
 				isIssue: coupon?.isIssue ? coupon.isIssue : 'Y',         // 수정
 				issueDate: coupon?.issueDate || '',
-				productNames: coupon?.productNames && (coupon.productNames).length > 0 ? 
-								coupon.productNames
-								: ["상품7", "상품8", "상품9", "상품10"]
+				productNames: coupon?.productNames && (coupon.productNames).length > 0 ?
+					coupon.productNames : []
 			}
-			console.log("newCoupon : ",newCoupon)
-
+			
 			//쿠폰수정 API 호출
 			const result = await updateCoupon(newCoupon);
 			if (result.success) {
 				alert(`쿠폰을 수정 하였습니다.`);
-				router.push(`../${coupon?.couponId}?${searchParams.toString()}`); //페이지 이동
+				//router.push(`../${coupon?.couponId}?${searchParams.toString()}`); //페이지 이동
+				router.push(`../list?${searchParams.toString()}`); //페이지 이동
 			} else {
 				alert(result.message);
 				return;
@@ -128,7 +195,7 @@ export default function AdminCouponEdit({ params }: { params: Promise<{ id: stri
 						<h1 className="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">쿠폰수정</h1>
 						<ul className="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
 							<li className="breadcrumb-item text-muted">
-								<a href="../../demo1/dist/index.html" className="text-muted text-hover-primary">Home</a>
+								<a href="/admin/manage" className="text-muted text-hover-primary">Home</a>
 							</li>
 							<li className="breadcrumb-item">
 								<span className="bullet bg-gray-400 w-5px h-2px"></span>
@@ -186,6 +253,35 @@ export default function AdminCouponEdit({ params }: { params: Promise<{ id: stri
 											</div>
 										</div>
 									</div>
+
+									{/*--------------------------------------------------------------------*/}
+									<div className="row mb-6">
+										<label className="col-lg-4 col-form-label required fw-semibold fs-6">상품명</label>
+										<div className="col-lg-8">
+											<div className="row">
+												<div className="col-lg-6 fv-row">
+													<button type="button" onClick={addProduct} className="btn btn-primary">상품추가</button>
+												</div>
+											</div>
+										</div>
+									</div>
+									{couponProducts.map((product, index) => (
+										<div className="row mb-6" key={product.id}>
+											<label className="col-lg-4 col-form-label fw-semibold fs-6">{/*상품명*/}</label>
+											<div className="col-lg-8">
+												<div className="row">
+													<div className="col-lg-6 fv-row">
+														<input type="text" className="form-control form-control-lg form-control-solid mb-3 mb-lg-0" placeholder="상품명 입력"
+															value={product.name}
+															onChange={(e) => handleProductChange(product.id, e.target.value)}
+														/>
+													</div>
+													<span className="col-lg-1 fw-semibold pt-7" onClick={() => removeProduct(product.id)}>삭제</span>
+												</div>
+											</div>
+										</div>
+									))}
+									{/*--------------------------------------------------------------------
 									<div className="row mb-6">
 										<label className="col-lg-4 col-form-label required fw-semibold fs-6">템플릿 선택</label>
 										<div className="col-lg-8">
@@ -228,6 +324,9 @@ export default function AdminCouponEdit({ params }: { params: Promise<{ id: stri
 											</div>
 										</div>
 									</div>
+									*/}		
+
+
 									<div className="row mb-6">
 										<label className="col-lg-4 col-form-label required fw-semibold fs-6">사용기간</label>
 										<div className="col-lg-8">
@@ -289,10 +388,11 @@ export default function AdminCouponEdit({ params }: { params: Promise<{ id: stri
 									</div>
 								</div>
 								<div className="card-footer d-flex justify-content-end py-6 px-9">
+									<button type="button" onClick={handleDelete} className="btn btn-light btn-active-light-primary me-2">쿠폰폰삭제</button>
 									<button type="button" onClick={handleSubmit} className="btn btn-primary" id="kt_account_profile_details_submit">쿠폰수정</button>
-									<button type="button" onClick={() => { 
-                                            router.push(`./list?${searchParams.toString()}`); //목록
-                                        }}
+									<button type="button" onClick={() => {
+										router.push(`../list?${searchParams.toString()}`); //목록
+									}}
 										className="btn btn-light btn-active-light-primary me-2">목록</button>
 								</div>
 							</form>

@@ -6,7 +6,7 @@ import { removeCookieName, setCookieName, getCookieName } from '@/lib/cookies';
 
 //모든 토큰을 쿠키에 넣는다.
 export const saveAdminTokens = (accessToken: string, refreshToken: string) => {
-    setCookieName('adminAccessToken', accessToken, 60 * 60 * 1)
+    setCookieName('adminAccessToken', accessToken, 60 * 60 * 24 * 10) //10일
     setCookieName('adminRefreshToken', refreshToken, 60 * 60 * 24 * 30) //30일
 };
 //모든 토큰과 모든 쿠키를 지운다.

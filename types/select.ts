@@ -15,7 +15,13 @@ export const SelectCouponSearchOptions: OptionType[] = [
         { value: 'all', label: '전체' },
         { value: 'name', label: '상호명' },
         { value: 'coupon', label: '쿠폰명' },
-        { value: 'state', label: '상태' },
+];
+
+export const SelectCouponIssueSearchOptions: OptionType[] = [
+        { value: 'all', label: '전체' },
+        { value: 'id', label: '아이디' },
+        { value: 'coupon', label: '쿠폰명' },
+        { value: 'name', label: '상호명' },
 ];
 
 export const SelectBusinessTypeOptions: OptionType[] = [
@@ -28,4 +34,18 @@ export const SelectBusinessTypeOptions: OptionType[] = [
         { value: '패스트푸드', label: '패스트푸드' },
         { value: '아시안', label: '아시안' },
         { value: '카페ㆍ디저트', label: '카페ㆍ디저트' },
+];
+
+export const SelectCouponQRCodeIsUsedOptions: OptionType[] = [
+        { value: '', label: '전체' },
+        { value: 'N', label: '미사용' },
+        { value: 'Y', label: '사용' },
+        { value: 'E', label: '기간만료' },
+];
+
+export const SelectCouponIsStateOptions: OptionType[] = [
+        { value: '', label: '전체' },
+        { value: 'WAITING', label: '대기중' },
+        { value: 'ING', label: '진행중' },
+        { value: 'END', label: '기간만료' },
 ];

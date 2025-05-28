@@ -1,13 +1,14 @@
 'use client';
 import React, { useState } from 'react';
 import { QRCodeCanvas, QRCodeSVG } from 'qrcode.react';
+import { qrcodeUsed } from '@/lib/apis/partner';
 
 import axios from 'axios';
 
 export default function Business() {
 
-    const [couponUrl, setCouponUrl] = useState('http://www.naver.com');
-
+    //const [couponUrl, setCouponUrl] = useState('http://localhost:3000/business/manage/qrcode?id=b021cc06-a27d-4b01-9c97-547e9d4232fd');
+    const [couponUrl, setCouponUrl] = useState('http://1.234.38.137:3000/business/manage/qrcode?id=b021cc06-a27d-4b01-9c97-547e9d4232fd');
 
     const handleDownload = () => {
         const canvas = document.querySelector('canvas');
@@ -47,14 +48,17 @@ export default function Business() {
                 <div id="kt_app_content_container" className="app-container container-xxl">
                     <div className="card">
                         <div className="card-header align-items-center py-5 gap-2 gap-md-5">
+                            <a href="/business/qrcode">QR코드 생성</a> 
                             <div className="card-title">
-                                
+
                                 {
                                     couponUrl && (
                                         <div className="mt-6">
                                             <h2> QR 코드 샘플</h2>
                                             <QRCodeCanvas value={couponUrl} size={200} />
-                                            <p className="mt-2 text-sm">{couponUrl}</p>
+                                            <p className="mt-2 text-sm"><a href={couponUrl}>{couponUrl}</a>
+                                            - 쿠폰사용하러 가기 
+                                            </p>
 
                                             <h2> QR 코드 샘플-더 선명함</h2>
                                             <QRCodeSVG value={couponUrl} size={200} />

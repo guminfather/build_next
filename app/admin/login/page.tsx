@@ -93,7 +93,7 @@ export default function LoginAdmin() {
             <div className="d-flex flex-lg-row-fluid w-lg-50 bgi-size-cover bgi-position-center" 
             style={{ backgroundImage: 'url("/images/login/auth-bg.png")' }}>  
                 <div className="d-flex flex-column flex-center p-6 p-lg-10 w-100">
-                    <a href="../../demo1/dist/index.html" className="mb-0 mb-lg-20">
+                    <a href="/admin/manage" className="mb-0 mb-lg-20">
                         <img alt="Logo" src="/images/logo/default-dark.svg" className="h-40px h-lg-50px" />
                     </a>
                     <img className="d-none d-lg-block mx-auto w-300px w-lg-75 w-xl-400px mb-10 mb-lg-20" src="/images/login/auth-screens.png" alt="" />

@@ -40,11 +40,37 @@ export const deleteCoupon = async (couponId: number) => {
     }
 };
 
+
+//쿠폰들 삭제
+export const deleteCoupons = async (couponIds: number[]) => {
+    try {
+        const res = await axiosInstance.delete(`/api/partner/coupons/${couponIds}`);
+        return { success: true, value: "쿠폰들 삭제 성공" };
+    } catch (error: any) {
+        const message = error.response?.data?.error || "서버 오류가 발생했습니다.";
+        console.log("에러메세지 : ", message);
+        return { success: false, message };
+    }
+};
+
 //사업자 쿠폰리스트 
 export const fetchPartnerCoupons = async (newSearch: Search) => {
     try {
         const query = qs.stringify(newSearch);
         const res = await axiosInstance.get(`/api/partner/coupons?${query}`);
+        return { success: true, value: res.data };
+
+    } catch (error: any) {
+        const message = error.response?.data?.error || "서버 오류가 발생했습니다.";
+        console.log("에러메세지 : ", message);
+        return { success: false, message };
+    }
+};
+// 사업자 쿠폰 리스트 (엑셀용)
+export const fetchPartnerCouponsExcel = async (newSearch: Search) => {
+    try {
+        const query = qs.stringify(newSearch);
+        const res = await axiosInstance.get(`/api/partner/couponsExcel?${query}`);
         return { success: true, value: res.data };
 
     } catch (error: any) {
@@ -95,6 +121,18 @@ export const deletePartner = async () => {
     try {
         const res = await axiosInstance.delete(`/api/partner`);
         return { success: true, value: "사업자 정보 탈퇴처리 성공" };
+    } catch (error: any) {
+        const message = error.response?.data?.error || "서버 오류가 발생했습니다.";
+        console.log("에러메세지 : ", message);
+        return { success: false, message };
+    }
+};
+
+//QR코드 사용처리
+export const qrcodeUsed = async (queryId: string) => {
+    try {
+        const res = await axiosInstance.get(`/api/partner/qrcodeUsed?id=${queryId}`);
+        return { success: true, value: "할인쿠폰사용 성공" };
     } catch (error: any) {
         const message = error.response?.data?.error || "서버 오류가 발생했습니다.";
         console.log("에러메세지 : ", message);

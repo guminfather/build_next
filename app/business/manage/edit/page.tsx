@@ -2,11 +2,12 @@
 
 import Select, { SingleValue } from 'react-select';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState, use, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { PartnerResponse, PartnerRequest } from '@/types/partner';
 import { OptionType, SelectBusinessTypeOptions } from '@/types/select';
+import { usernameRegex, emailRegex, passwordRegex, phoneRegex } from '@/utils/regex';
 import { fetchPartnerDetail, updatePartner, deletePartner } from '@/lib/apis/partner';
-import { getCookieBusinessId, getCookieBusinessName, removeBusinessTokensCookies } from '@/lib/businessAuth';
+import { getCookieBusinessId, removeBusinessTokensCookies } from '@/lib/businessAuth';
 
 
 export default function PartnerEdit() {
@@ -21,12 +22,6 @@ export default function PartnerEdit() {
 	const [partner, setPartner] = useState<PartnerResponse | null>(null);
 	var [pwRe, setPwRe] = useState("");
 
-	//정규 표현식
-	const usernameRegex = /^[a-z][a-z0-9]{3,11}$/;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-    const phoneRegex = /^(01[016789]|070)\d{7,8}$/;
-	
 	const [selectedOptionValue, setSelectedOptionValue] = useState<OptionType | null>(null);
 	
     //useEffect
@@ -165,7 +160,7 @@ export default function PartnerEdit() {
 						<h1 className="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">정보수정</h1>
 						<ul className="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
 							<li className="breadcrumb-item text-muted">
-								<a href="../../demo1/dist/index.html" className="text-muted text-hover-primary">Home</a>
+								<a href="/business/manage" className="text-muted text-hover-primary">Home</a>
 							</li>
 							<li className="breadcrumb-item">
 								<span className="bullet bg-gray-400 w-5px h-2px"></span>

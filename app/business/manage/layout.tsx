@@ -3,13 +3,10 @@
 import Link from "next/link";
 import Modal from '@/components/modal';
 import { useEffect, useState, useRef } from 'react';
-import { refreshAccessToken } from '@/lib/apis/common';
 import { usePathname, useRouter } from 'next/navigation';
 import { getCookieName } from '@/lib/cookies';
-import {
-    getBusinessAccessToken, getBusinessRefreshToken, saveBusinessTokens
-    , isBusinessTokenExpired, decodeBusinessToken, removeBusinessTokensCookies
-} from '@/lib/businessAuth';
+import { removeBusinessTokensCookies } from '@/lib/businessAuth';
+import BusinessGuard from '@/components/BusinessGuard';
 
 
 import "../../css/datatables.bundle.css";
@@ -21,7 +18,6 @@ export default function BusinessLayout({ children }: Readonly<{ children: React.
     const boxRef2 = useRef<HTMLDivElement>(null); //박스위치
 
     const [user, setUser] = useState<{ userId: string; roles: string } | null>(null);
-    const [isLoding, setIsLoding] = useState(false);
     const [sidebar, setSidebar] = useState(true);
     const [menushow, setMenuShow] = useState(false);
     const [mobileMenuShow, setMobileMenuShow] = useState(false);
@@ -29,58 +25,9 @@ export default function BusinessLayout({ children }: Readonly<{ children: React.
 
     const [isOpen, setIsOpen] = useState(false);
 
-    //business/manage 대쉬보드| coupon 쿠폰리스트 | coupon/add 쿠폰등록 | 쿠폰발급목록
-    const [menus, setMenus] = useState([false, false, false, false]);
-
-    useEffect(() => {
-
-        const checkAuth = async () => {
-            const accessToken = getBusinessAccessToken();
-            const refreshToken = getBusinessRefreshToken();
-
-            console.log("accessToken : ", accessToken)
-            console.log("refreshToken : ", refreshToken)
-
-            //토큰여부, 토큰 유효기간 체크 
-            if (accessToken && !isBusinessTokenExpired(accessToken)) {
-                const payload = decodeBusinessToken(accessToken);
-                setUser({ userId: payload.subject, roles: "Partner" }); //로그인 아이디, 롤정보
-                setIsLoding(true);
-
-                //토큰 재발급
-            } else if (refreshToken && !isBusinessTokenExpired(refreshToken)) {
-                try {
-                    console.log("- 토큰 재발급 ----------------------------")
-                    const result = await refreshAccessToken(refreshToken);
-                    if (result.success) {
-                        console.log("data : ", result.value) //새토큰
-                        saveBusinessTokens(result.value, refreshToken); //새토큰,refreshToken 저장
-                        const payload = decodeBusinessToken(result.value); //새토큰 정보
-
-                        console.log("다시 요청해서 받은 토큰 데이터 : ", payload)
-                        setUser({ userId: payload.subject, roles: "Partner" }); //로그인 아이디, 롤정보
-
-                        setIsLoding(true);
-
-                    } else throw new Error(result.message || "토큰 재발급 실패");
-
-                } catch (err) {
-                    console.error("토큰 재발급 에러:", err);
-                    removeBusinessTokensCookies();
-                    setUser(null);
-                    window.location.href = '/business/login';
-                }
-            } else {
-                console.log("모든 유효기간이 만료되었습니다.")
-                removeBusinessTokensCookies();
-                setUser(null);
-                window.location.href = '/business/login';
-            }
-        };
-
-        checkAuth();
-    }, []);
-
+    //business/manage 대쉬보드| coupon 쿠폰리스트 | coupon/add 쿠폰등록
+    const [menus, setMenus] = useState([false, false, false]);
+    
     //로그아웃
     const handleLogout = () => {
         removeBusinessTokensCookies();
@@ -113,34 +60,28 @@ export default function BusinessLayout({ children }: Readonly<{ children: React.
         };
     }, []);
 
+    //메뉴 bold 처리
     useEffect(() => {
         if (pathname.includes("coupon")) {
             setMenuShow(true);
             if (pathname.includes("add")) {
-                setMenus([false, false, true, false]);
-            } else if (pathname.includes("issuelist")) {
-                setMenus([false, false, false, true]);
-            } else{
-                setMenus([false, true, false, false]);
+                setMenus([false, false, true]);
+            }else{
+                setMenus([false, true, false]);
             }
         } else { //pathname==="/business/manage"
-            setMenus([true, false, false, false]);
+            setMenus([true, false, false]);
         }
-        console.log("======================= pathname : " + pathname);
-        console.log("======================= menus : " + menus);
     }, [pathname]);
-
-   
 
     console.log(menus)
 
     const openPopup = () => {
         window.open('/popup-content', 'popup', 'width=500,height=400');
     };
-    if (!isLoding) return <body><div>로딩 중...</div></body>
     
     return (
-            <>
+            <BusinessGuard>
                 <body id="kt_app_body" 
                     data-kt-app-layout="dark-sidebar" 
                     data-kt-app-header-fixed="true"
@@ -175,7 +116,7 @@ export default function BusinessLayout({ children }: Readonly<{ children: React.
                                     </div>
                                     {
                                         /*<div className="d-flex align-items-center flex-grow-1 flex-lg-grow-0">
-                                            <a href="../../demo1/dist/index.html" className="d-lg-none">
+                                            <a href="/business/manage" className="d-lg-none">
                                                 <img alt="Logo" src="assets/media/logos/default-small.svg" className="theme-light-show h-30px" />
                                                 <img alt="Logo" src="assets/media/logos/default-small-dark.svg" className="theme-dark-show h-30px" />
                                             </a>
@@ -215,9 +156,6 @@ export default function BusinessLayout({ children }: Readonly<{ children: React.
                                                     onClick={() => {
                                                         setMobileMenuShow(false)
                                                         setMobileMenu2Show(true) //모바일에서 로그아웃있는 메뉴클릭시(오른쪽 상단)
-                                                        
-                                                        
-                                                        
                                                     }}
                                                     className={`className="btn btn-flex btn-icon btn-active-color-primary w-30px h-30px ${mobileMenu2Show ? 'active' : ''}`}
                                                 >
@@ -239,7 +177,7 @@ export default function BusinessLayout({ children }: Readonly<{ children: React.
                                     data-kt-drawer-toggle="#kt_app_sidebar_mobile_toggle">
                                     <div className="app-sidebar-logo px-6" id="kt_app_sidebar_logo">
                                         {/*-- 로고 --*/}
-                                        <a href="../../demo1/dist/index.html">
+                                        <a href="/business/manage">
                                             <img alt="Logo" src="/images/logo/default-dark.svg" className="h-30px app-sidebar-logo-default" />
                                         </a>
                                         {/*-- 열기닫기버튼 --*/}
@@ -247,13 +185,8 @@ export default function BusinessLayout({ children }: Readonly<{ children: React.
                                             className={`app-sidebar-toggle btn btn-icon btn-sm h-30px w-30px rotate ${sidebar ? '' : 'active'}`}
                                             data-kt-toggle="true" data-kt-toggle-state="active" data-kt-toggle-target="body" data-kt-toggle-name="app-sidebar-minimize">
                                             <i className="ki-duotone ki-double-left fs-2 rotate-180">
-                                                <span className="path1" onClick={() => {
-                                                    console.log("첫번째")
-                                                }}></span>
-                                                <span className="path2" onClick={() => {
-                                                    console.log("두번째")
-                                                    setSidebar((prev) => !prev)
-                                                }}></span>
+                                                <span className="path1"></span>
+                                                <span className="path2" onClick={() => { setSidebar((prev) => !prev) }}></span>
                                             </i>
                                         </div>
                                     </div>
@@ -321,18 +254,6 @@ export default function BusinessLayout({ children }: Readonly<{ children: React.
                                                                     <span className="menu-title">쿠폰등록</span>
                                                                 </span>
                                                             </div>
-                                                            <div data-kt-menu-trigger="click"
-                                                                className={`menu-item menu-accordion ${menus[3] ? 'hover showing' : ''}`}
-                                                                onClick={() => {
-                                                                    router.push(`/business/manage/coupon/issuelist`);
-                                                                }} >
-                                                                <span className="menu-link">
-                                                                    <span className="menu-bullet">
-                                                                        <span className="bullet bullet-dot"></span>
-                                                                    </span>
-                                                                    <span className="menu-title">쿠폰발급목록</span>
-                                                                </span>
-                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -359,7 +280,7 @@ export default function BusinessLayout({ children }: Readonly<{ children: React.
                         </div>
                     </div>
                 </body>
-            </>
+            </BusinessGuard>
         );
 }
 

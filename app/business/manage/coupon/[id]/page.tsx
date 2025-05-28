@@ -53,7 +53,7 @@ export default function BusinessCouponDetail({ params }: { params: Promise<{ id:
                         <h1 className="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">쿠폰 상세정보</h1>
                         <ul className="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
                             <li className="breadcrumb-item text-muted">
-                                <a href="../../demo1/dist/index.html" className="text-muted text-hover-primary">Home</a>
+                                <a href="/business/manage" className="text-muted text-hover-primary">Home</a>
                             </li>
                             <li className="breadcrumb-item">
                                 <span className="bullet bg-gray-400 w-5px h-2px"></span>
@@ -76,36 +76,42 @@ export default function BusinessCouponDetail({ params }: { params: Promise<{ id:
                                     <div className="row mb-6">
                                         <label className="col-lg-4 col-form-label required fw-semibold fs-6">상호</label>
                                         <div className="col-lg-8 fv-row">
-                                            <input type="text" name="partnerId" className="form-control form-control-lg form-control-solid" readOnly
-                                                value={`${coupon?.partnerName + " (" + (coupon?.partnerId || '') + ")"}`} />
+                                            {`${coupon?.partnerName + " (" + (coupon?.partnerId || '') + ")"}`}
                                         </div>
                                     </div>
                                     <div className="row mb-6">
                                         <label className="col-lg-4 col-form-label required fw-semibold fs-6">쿠폰명</label>
                                         <div className="col-lg-8 fv-row">
-                                            <input type="text" name="couponName" className="form-control form-control-lg form-control-solid" placeholder=""
-                                                value={coupon?.couponName} readOnly />
+                                            {coupon?.couponName}
                                         </div>
                                     </div>
                                     <div className="row mb-6">
                                         <label className="col-lg-4 col-form-label required fw-semibold fs-6">할인율</label>
-                                        <div className="col-lg-8">
-                                            <div className="row">
-                                                <div className="col-lg-6 fv-row">
-                                                    <input type="number" name="discountRate" className="form-control form-control-lg form-control-solid mb-3 mb-lg-0" placeholder="숫자만 입력"
-                                                        value={coupon?.discountRate} readOnly />
-                                                </div>
-                                                <span className="col-lg-1 fw-semibold pt-7">%</span>
-                                            </div>
+                                        <div className="col-lg-8 fv-row">
+                                            {coupon?.discountRate} %
                                         </div>
                                     </div>
+                                    {/*--------------------------------------------------------------------*/}
+                                    <div className="row mb-6">
+                                        <label className="col-lg-4 col-form-label fw-semibold fs-6">상품명</label>
+                                        <div className="col-lg-8">
+                                            {coupon?.productNames.map((product, index) => (
+                                                <div className="row" key={index}>
+                                                    <div className="col-lg-6 fv-row">
+                                                        {index+1}. {product}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    {/*--------------------------------------------------------------------*/}
                                     <div className="row mb-6">
                                         <label className="col-lg-4 col-form-label required fw-semibold fs-6">템플릿 선택</label>
                                         <div className="col-lg-8">
                                             <div className="row">
                                                 {(coupon?.templateType || '') === 1 ?
                                                     <div className="col-lg-6">
-                                                        <input type="radio" className="btn-check" checked name="templateType" id="kt_create_account_form_account_type_personal" />
+                                                        <input type="radio" className="btn-check" name="templateType" id="kt_create_account_form_account_type_personal" />
                                                         <label className="btn btn-outline btn-outline-dashed btn-active-light-primary p-7 d-flex align-items-center" htmlFor="kt_create_account_form_account_type_personal">
                                                             <i className="ki-duotone ki-badge fs-3x me-5">
                                                                 <span className="path1"></span>
@@ -123,7 +129,7 @@ export default function BusinessCouponDetail({ params }: { params: Promise<{ id:
                                                 }
                                                 {(coupon?.templateType || '') === 2 ?
                                                     <div className="col-lg-6">
-                                                        <input type="radio" className="btn-check" checked name="templateType" id="kt_create_account_form_account_type_personal" />
+                                                        <input type="radio" className="btn-check" name="templateType" id="kt_create_account_form_account_type_personal" />
                                                         <label className="btn btn-outline btn-outline-dashed btn-active-light-primary p-7 d-flex align-items-center" htmlFor="kt_create_account_form_account_type_corporate">
                                                             <i className="ki-duotone ki-briefcase fs-3x me-5">
                                                                 <span className="path1"></span>
@@ -143,62 +149,47 @@ export default function BusinessCouponDetail({ params }: { params: Promise<{ id:
                                     <div className="row mb-6">
                                         <label className="col-lg-4 col-form-label required fw-semibold fs-6">사용기간</label>
                                         <div className="col-lg-8">
-                                            <div className="row">
-                                                <div className="col-lg-6 fv-row">
-                                                    <input type="text" className="form-control form-control-solid" name="usageStartDate"
-                                                        value={coupon?.usageStartDate} readOnly />
-                                                </div>
-                                                <div className="col-lg-6 fv-row">
-                                                    <input type="text" className="form-control form-control-solid" name="usageEndDate"
-                                                        value={coupon?.usageEndDate} readOnly />
-                                                </div>
-                                            </div>
+                                            {coupon?.usageStartDate} ~  {coupon?.usageEndDate}
                                         </div>
                                     </div>
                                     <div className="row mb-6">
                                         <label className="col-lg-4 col-form-label required fw-semibold fs-6">발급기간</label>
                                         <div className="col-lg-8">
-                                            <div className="row">
-                                                <div className="col-lg-6 fv-row">
-                                                    <input type="text" name="issueStartDate" className="form-control form-control-solid"
-                                                        value={coupon?.issueStartDate} readOnly />
-                                                </div>
-                                                <div className="col-lg-6 fv-row">
-                                                    <input type="text" name="issueEndDate" className="form-control form-control-solid"
-                                                        value={coupon?.issueEndDate} readOnly />
-                                                </div>
-                                            </div>
+                                            {coupon?.issueStartDate} ~ {coupon?.issueEndDate}
                                         </div>
                                     </div>
                                     <div className="row mb-6">
                                         <label className="col-lg-4 col-form-label fw-semibold fs-6">혜택내용</label>
-                                        <div className="col-lg-8 fv-row">
-                                            <textarea className="form-control form-control-solid" rows={3}
-                                                name="benefitDescription" placeholder="내용 입력" value={coupon?.benefitDescription}
-                                            ></textarea>
+                                        <div className="col-lg-8 fv-row" style={{ whiteSpace: 'pre-line' }}>
+                                            {coupon?.benefitDescription}
                                         </div>
                                     </div>
                                     <div className="row mb-6">
                                         <label className="col-lg-4 col-form-label required fw-semibold fs-6">쿠폰 사용여부</label>
                                         <div className="col-lg-8 fv-row">
                                             <div className="d-flex align-items-center mt-3">
-                                                <input type="text" name="isUsable" className="form-control form-control-solid"
-                                                    value={coupon?.isUsable === 'USABLE' ? '사용' : '사용불가'} readOnly />
+                                                 {coupon?.isUsable === 'USABLE' ? '사용' : '사용불가'}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="card-footer d-flex justify-content-end py-6 px-9">
                                     <button type="button" onClick={handleDelete} className="btn btn-light btn-active-light-primary me-2">삭제</button>
-                                    <button type="button" onClick={() => { //수정
-                                        router.push(`./edit/${id}?${searchParams.toString()}`); //수정
-                                    }} className="btn btn-light btn-active-light-primary me-2">수정</button>
-                                    <button type="button" onClick={() => {
-                                        //router.push(`./list?${searchParams.toString()}`); //쿠폰발급
-                                    }} className="btn btn-primary" id="kt_account_profile_details_submit">쿠폰발급</button>
-                                    <button type="button" onClick={() => {
-                                        router.push(`./list?${searchParams.toString()}`); //목록
-                                    }} className="btn btn-light btn-active-light-primary me-2">목록</button>
+                                    <button type="button" className="btn btn-light btn-active-light-primary me-2"
+                                        onClick={() => { //수정
+                                                router.push(`./edit/${id}?${searchParams.toString()}`);
+                                        }}>
+                                    수정</button>
+                                    <button type="button" className="btn btn-primary" id="kt_account_profile_details_submit"
+                                        onClick={() => { //쿠폰발급
+                                                //router.push(`./list?${searchParams.toString()}`); 
+                                        }}>
+                                    쿠폰발급</button>
+                                    <button type="button" className="btn btn-light btn-active-light-primary me-2"
+                                        onClick={() => { //목록
+                                                router.push(`./list?${searchParams.toString()}`); 
+                                        }}>
+                                    목록</button>
                                 </div>
                             </form>
                         </div>

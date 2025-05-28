@@ -7,6 +7,7 @@ import { fetchAdminPartnerDetail, updatePartner, deletePartner } from '@/lib/api
 import { PartnerResponse, PartnerRequest } from '@/types/partner';
 import { OptionType, SelectBusinessTypeOptions } from '@/types/select';
 import { fetchBusinessCheck } from '@/lib/apis/common';
+import { usernameRegex, emailRegex, passwordRegex, phoneRegex } from '@/utils/regex';
 
 
 export default function AdminPartnerEdit({ params }: { params: Promise<{ id: string }> }) {
@@ -44,15 +45,8 @@ export default function AdminPartnerEdit({ params }: { params: Promise<{ id: str
 		id: false,
 	});
 
-	//*** 2. 회원수정 정규 표현식
-	const usernameRegex = /^[a-z][a-z0-9]{3,11}$/;
-	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-	const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-	const phoneRegex = /^(01[016789]|070)\d{7,8}$/;
-
 	const [selectedOptionValue, setSelectedOptionValue] = useState<OptionType | null>(null);
 
-	
 	
 	//useEffect
 	useEffect(() => {
@@ -189,7 +183,7 @@ export default function AdminPartnerEdit({ params }: { params: Promise<{ id: str
 					<h1 className="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">사업자회원 수정</h1>
 					<ul className="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
 						<li className="breadcrumb-item text-muted">
-							<a href="../../demo1/dist/index.html" className="text-muted text-hover-primary">Home</a>
+							<a href="/admin/manage" className="text-muted text-hover-primary">Home</a>
 						</li>
 						<li className="breadcrumb-item">
 							<span className="bullet bg-gray-400 w-5px h-2px"></span>

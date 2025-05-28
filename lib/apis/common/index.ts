@@ -1,19 +1,12 @@
 import axios from 'axios';
-import qs from 'qs';
-import { Member } from '@/types/memberType';
-import { Business } from '@/types/businessType';
 import { Partner } from '@/types/partner';
-import { Coupon } from '@/types/coupon';
-import { Search } from '@/types/search';
 import { parseStringPromise } from 'xml2js';
-import { getBusinessAccessToken } from '@/lib/businessAuth';
-import { getAdminAccessToken } from '@/lib/adminAuth';
 import axiosInstance from '@/lib/apis/axiosInstance';
 
 
 const API_BIZNO_URL = 'https://bizno.net'; // 사업자번호 API 주소
-const API_BASE_URL = 'http://localhost:8080'; // API 서버 주소 (local)
-//const API_BASE_URL = 'http://1.234.38.137:8080'; // API 서버 주소 (실서버)
+//const API_BASE_URL = 'http://localhost:8080'; // API 서버 주소 (local)
+const API_BASE_URL = 'http://1.234.38.137:8080'; // API 서버 주소 (실서버)
 
 // 사업자 아이디 존재 여부 확인
 export const fetchBusinessIdCheck = async (id: string) => {
@@ -79,11 +72,6 @@ export const fetchBusinessCheck = async (businessNumber: string) => {
     return jsonResult.response.body.totalCount;
 };
 
-// 사업자정보 조회
-export const fetchBusinessByBusinessId = async (businessId: string) => {
-    const res = await axiosInstance.get<{ data: Business }>(`/businessId/${businessId}`);
-    return res.data;
-};
 
 
 
@@ -98,6 +86,23 @@ export const refreshAccessToken = async (refreshToken: string) => {
             withCredentials: true,
         });
         return { success: true, value: res.data.accessToken };
+    } catch (error: any) {
+        const message = error.response?.data?.error || "서버 오류가 발생했습니다.";
+        return { success: false, message };
+    }
+};
+
+
+// qr코드 생성
+export const qrcodeCreate = async () => {
+    try {
+        const res = await axiosInstance.post('/api/qrcode', {
+            couponId: 4,
+            userId: 'ha222',
+            productName: '상품1',
+            discountRate: 30
+        });
+        return { success: true, value: res.data };
     } catch (error: any) {
         const message = error.response?.data?.error || "서버 오류가 발생했습니다.";
         return { success: false, message };

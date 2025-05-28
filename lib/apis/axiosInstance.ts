@@ -1,6 +1,8 @@
 import axios from "axios";
 import { getBusinessAccessToken } from '@/lib/businessAuth';
 import { getAdminAccessToken } from '@/lib/adminAuth';
+import { removeBusinessTokensCookies } from '@/lib/businessAuth';
+import { removeAdminTokensCookies } from '@/lib/adminAuth';
 
 //const API_BASE_URL = 'http://localhost:8080'; // API 서버 주소 (local)
 const API_BASE_URL = 'http://1.234.38.137:8080'; // API 서버 주소 (실서버)
@@ -45,7 +47,7 @@ axiosInstance.interceptors.request.use(
         else {
 
         }
-        
+
         return config;
     },
     (error) => {
@@ -57,10 +59,31 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response) {
-            console.error("에러 응답:", error.response.data?.error || error.message);
+        if (error.response && error.response.status === 401) {
+            const errorMessage = error.response.data.error || "인증오류"; //에러메세지
+            const requestUrl = error.config?.url || ""; //요청 URL
+
+            console.log("requestUrl : ", requestUrl)
+            // 관리자
+            if (requestUrl.startsWith("/api/admin")) {
+                removeAdminTokensCookies();
+                alert(errorMessage + "\n다시 로그인해주세요.");
+                window.location.href = "/admin/login";
+            }
+            // 사업자
+            else if (requestUrl.startsWith("/api/partner")) {
+                removeBusinessTokensCookies();
+                alert(errorMessage + "\n다시 로그인해주세요.");
+                window.location.href = "/business/login";
+            }
+            // 그 외는 일반 로그인 페이지
+            else {
+                alert(errorMessage + "\n다시 로그인해주세요.");
+                window.location.href = "/business/login";
+            }
         } else {
-            console.error("서버 연결 실패:", error.message);
+            console.error("에러 응답:", error.response.data?.error || error.message);
+            //console.error("서버 연결 실패:", error.message);
         }
         return Promise.reject(error);
     }

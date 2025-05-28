@@ -1,19 +1,17 @@
 'use client'
 
-import { useRouter } from 'next/navigation';
-
 import React, { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { Coupon, CouponProduct } from '@/types/coupon';
+import { dateRegex, discountRegex } from '@/utils/regex';
+import { getToday,getNextDay, hasText } from '@/utils/common';
 import { createCoupon } from '@/lib/apis/partner';
-import { useSignUpStore } from '@/stores/useSignUpStore';
-import { Coupon } from '@/types/coupon';
-import { getCookieName } from '@/lib/cookies';
 
-//import { saveTokens } from '@/lib/businessAuth';
+
 import "../../../../css/fullcalendar.bundle.css";
 import "../../../../css/datatables.bundle.css";
 import "../../../../css/plugins.bundle.css";
 import "../../../../css/style.bundle.css";
-
 
 export default function BusinessCouponAdd() {
 
@@ -21,27 +19,63 @@ export default function BusinessCouponAdd() {
 
 	const nameInputRef = useRef<HTMLInputElement>(null);
 
-	var [couponName, setCouponName] = useState("할인쿠폰");
-	var [discountRate, setDiscountRate] = useState(30);
-	var [templateType, setTemplateType] = useState(2);
-	var [usageStartDate, setUsageStartDate] = useState("2024-01-01");
-	var [usageEndDate, setUsageEndDate] = useState("2024-10-10");
-	var [issueStartDate, setIssueStartDate] = useState("2024-01-10");
-	var [issueEndDate, setIssueEndDate] = useState("2024-10-10");
-	var [benefitDescription, setBenefitDescription] = useState("ㅇㄹㄴㅇㄹ니");
-	var [isUsable, setIsUsable] = useState("USABLE");
-	var [isIssue, setIsIssue] = useState("N");
-	var [productNames, setProductNames] = useState<string[]>([]);
+	const [couponName, setCouponName] = useState("");
+	const [discountRate, setDiscountRate] = useState(0);
+	const [templateType, setTemplateType] = useState(1);
+	const [usageStartDate, setUsageStartDate] = useState(getToday);
+	const [usageEndDate, setUsageEndDate] = useState(getNextDay(30));
+	const [issueStartDate, setIssueStartDate] = useState(getToday);
+	const [issueEndDate, setIssueEndDate] = useState(getNextDay(30));
+	const [benefitDescription, setBenefitDescription] = useState("");
+	const [isUsable, setIsUsable] = useState("USABLE");
+	const [isIssue, setIsIssue] = useState("N"); //발급여부
+	const [productNames, setProductNames] = useState<string[]>([]);
+	const [couponProducts, setCouponProducts] = useState<CouponProduct[]>([])
 
-	//정규 표현식
-	const dateRegex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
-	const discountRegex = /^(100|[1-9]?[0-9])$/;
+	
+	//쿠폰상품에 재배열 //console.log("상품 등록 내용 (productNames) :  ", names);
+	const couponProductsUpdate = () => {
+		const names = couponProducts.map(p => p.name.trim()).filter(name => name.length > 0)
+		setProductNames(prev => ({ ...prev!, productNames: names }))
+	}
+	
+	//상품 추가 
+	const addProduct = () => {
+		/*
+		if (couponProducts.length >= 5) {
+			alert("최대 5개까지 입력 가능합니다.")
+			return
+		}*/
+		const newProduct: CouponProduct = {
+			id: Date.now(),
+			name: ''
+		}
+		setCouponProducts([...couponProducts, newProduct])
+		couponProductsUpdate()
+	}
+	//상품 삭제 
+	const removeProduct = (id: number) => {
+		setCouponProducts(couponProducts.filter(product => product.id !== id))
+		couponProductsUpdate()
+	}
+	//상품 입력 
+	const handleProductChange = (id: number, value: string) => {
+		//console.log("id, value : ", id+","+value)
+		setCouponProducts(couponProducts.map(product =>
+			product.id === id ? { ...product, name: value } : product
+		))
+		couponProductsUpdate()
+	}
+	
 	
 	//쿠폰등록 버튼 클릭 핸들러 (handleSubmit)
 	const handleSubmit = async () => {
 		try {
 			//nameInputRef.current?.focus(); /*********** 이름에 포커스 ******************* */
-
+			if (!hasText(couponName)) {
+				alert('쿠폰명을 입력해주세요.');
+				return;
+			}
 			if (!dateRegex.test(usageStartDate)) { //시작일 검증
 				alert('사용기간 형식이 올바르지 않습니다.');
 				return;
@@ -58,14 +92,20 @@ export default function BusinessCouponAdd() {
 				alert('발급기간 형식이 올바르지 않습니다.');
 				return;
 			}
-			/*
-			if (!discountRegex.test(typeof Number(discountRate))) { //할인율
-				alert('형식이 올바르지 않습니다.');
+			if (!discountRegex.test(String(Number(discountRate)))) { //할인율
+				alert('할인율은 (0~100) 입니다. 형식이 올바르지 않습니다.');
 				return;
+			}
+
+			//상품 최소 한개 이상 입력
+			const names = couponProducts.map(p => p.name.trim()).filter(name => name.length > 0)
+			/*
+			if (names.length === 0) {
+				alert("최소 한 개 이상의 상품명을 입력해주세요.")
+				return
 			}*/
-			
+						
 			const newCoupon: Coupon = {
-				//partnerId: ''+getCookieName("cookieBusinessId"),
 				partnerId: '',
 				couponName: couponName,
 				discountRate: discountRate,
@@ -78,16 +118,13 @@ export default function BusinessCouponAdd() {
 				isUsable: "USABLE",
 				isIssue : "N",
 				issueDate : "",
-				productNames: productNames.length > 0 ? 
-								productNames
-								: ["상품11", "상품12"],
+				productNames: names,
 			}
-            
-            console.log(newCoupon)
+            //console.log(newCoupon)
 			//쿠폰등록 API 호출
 			const result = await createCoupon(newCoupon);
 			if (result.success) {
-				alert(`"쿠폰을 생성 하였습니다.`);
+				alert(`쿠폰을 생성 하였습니다.`);
 				router.push("./list"); //페이지 이동
 			} else {
 				alert(result.message);
@@ -106,7 +143,7 @@ export default function BusinessCouponAdd() {
 							<h1 className="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">쿠폰등록</h1>
 							<ul className="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
 								<li className="breadcrumb-item text-muted">
-									<a href="../../demo1/dist/index.html" className="text-muted text-hover-primary">Home</a>
+									<a href="/business/manage" className="text-muted text-hover-primary">Home</a>
 								</li>
 								<li className="breadcrumb-item">
 									<span className="bullet bg-gray-400 w-5px h-2px"></span>
@@ -145,6 +182,37 @@ export default function BusinessCouponAdd() {
 												</div>
 											</div>
 										</div>
+
+										{/*--------------------------------------------------------------------*/}
+										<div className="row mb-6">
+											<label className="col-lg-4 col-form-label required fw-semibold fs-6">상품명</label>
+											<div className="col-lg-8">
+												<div className="row">
+													<div className="col-lg-6 fv-row">
+														<button type="button" onClick={addProduct} className="btn btn-primary">상품추가</button>
+													</div>
+												</div>
+											</div>
+										</div>
+										{couponProducts.map((product, index) => (
+										<div className="row mb-6" key={product.id}>
+											<label className="col-lg-4 col-form-label fw-semibold fs-6">{/*상품명*/}</label>
+											<div className="col-lg-8">
+												<div className="row">
+													<div className="col-lg-6 fv-row">
+														<input type="text" className="form-control form-control-lg form-control-solid mb-3 mb-lg-0" placeholder="상품명 입력"
+															value={product.name}
+															onChange={(e) => handleProductChange(product.id, e.target.value)}
+														/>
+													</div>
+													<span className="col-lg-1 fw-semibold pt-7" onClick={() => removeProduct(product.id)}>삭제</span>
+												</div>
+											</div>
+										</div>
+										))}
+										{/*--------------------------------------------------------------------
+
+
 										<div className="row mb-6">
 											<label className="col-lg-4 col-form-label required fw-semibold fs-6">템플릿 선택</label>
 											<div className="col-lg-8">
@@ -182,7 +250,7 @@ export default function BusinessCouponAdd() {
 													</div>
 												</div>
 											</div>
-										</div>
+										</div>*/}
 										<div className="row mb-6">
 											<label className="col-lg-4 col-form-label required fw-semibold fs-6">사용기간</label>
 											<div className="col-lg-8">
