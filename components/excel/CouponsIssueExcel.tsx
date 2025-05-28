@@ -57,7 +57,7 @@ export default function CouponsIssueExcel<T>({ searchText, searchType, isState }
                         , item.couponName
                         , item.discountRate
                         , formatTwoDateWithDot(item.usageStartDate,item.usageEndDate)
-                        , format(item.createdAt, 'yyyy.MM.dd')
+                        , format(new Date(item.createdAt), 'yyyy.MM.dd'), 
                         , item.isState==="Y"? "사용" : item.isState==="N"? "미사용" : item.isState==="E"? "기간만료" : ""
                     ]
                 ),];

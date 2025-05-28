@@ -58,7 +58,7 @@ export default function CouponIssueTable({ couponQRCodes, total, currentPage, pa
                         </td>
                         <td>{m.discountRate}%</td>
                         <td>{formatTwoDateWithDot(m.usageStartDate , m.usageEndDate)}</td>
-                        <td data-bs-target="license">{format(m.createdAt, 'yyyy.MM.dd')}</td>
+                        <td data-bs-target="license">{format(new Date(m.createdAt), 'yyyy.MM.dd')}</td>
                         <td>
                             {m.isState==="Y" ? <span className="badge fw-bold me-auto px-4 py-3 badge-light-primary ">사용</span> : ""}
                             {m.isState==="N" ? <span className="badge fw-bold me-auto px-4 py-3 badge-light-primary ">미사용</span> : ""}
