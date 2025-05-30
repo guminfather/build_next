@@ -210,7 +210,7 @@ export default function BusinessCouponAdd() {
 											</div>
 										</div>
 										))}
-										{/*--------------------------------------------------------------------
+										{/*--------------------------------------------------------------------*/}
 
 
 										<div className="row mb-6">
@@ -250,7 +250,8 @@ export default function BusinessCouponAdd() {
 													</div>
 												</div>
 											</div>
-										</div>*/}
+										</div>
+										{/*--------------------------------------------------------------------*/}
 										<div className="row mb-6">
 											<label className="col-lg-4 col-form-label required fw-semibold fs-6">사용기간</label>
 											<div className="col-lg-8">

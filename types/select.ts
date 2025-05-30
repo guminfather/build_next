@@ -31,9 +31,10 @@ export const SelectBusinessTypeOptions: OptionType[] = [
         { value: '양식', label: '양식' },
         { value: '피자', label: '피자' },
         { value: '치킨', label: '치킨' },
-        { value: '패스트푸드', label: '패스트푸드' },
         { value: '아시안', label: '아시안' },
+        { value: '패스트푸드', label: '패스트푸드' },
         { value: '카페ㆍ디저트', label: '카페ㆍ디저트' },
+        { value: '기타', label: '기타' },
 ];
 
 export const SelectCouponQRCodeIsUsedOptions: OptionType[] = [

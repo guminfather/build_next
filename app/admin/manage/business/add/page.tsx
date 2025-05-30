@@ -88,13 +88,11 @@ export default function AdminPartnerAdd() {
                 alert('아이디 중복 확인을 완료해주세요.');
                 return;
             }
-            /*
-            if (!passwordRegex.test(pw)) { //비밀번호 검증	영문/숫자/특수문자 포함, 8자 이상
-                alert('비밀번호 형식이 올바르지 않습니다.\n(영문/숫자/특수문자 포함, 8자 이상)');
+            if (!passwordRegex.test(partner?.partnerPassword)) { //비밀번호 검증
+                alert('비밀번호 형식이 올바르지 않습니다.\n(8~12자의 영문, 숫자, 특수문자 중 2가지 이상으로만 가능합니다.)');
                 return;
             }
-            */
-            if (partner?.partnerPassword != pwRe) { //비밀번호 검증	영문/숫자/특수문자 포함, 8자 이상
+            if (partner?.partnerPassword != pwRe) {
                 alert('비밀번호가 서로 일치 하지 않습니다.');
                 return;
             }
@@ -104,6 +102,10 @@ export default function AdminPartnerAdd() {
             }
             if (!phoneRegex.test(partner?.phone ?? '')) { //휴대폰 번호 검증	숫자만, 010으로 시작, 10~11자
                 alert('연락처 형식이 올바르지 않습니다.\n(010/011 등으로 시작, 숫자만, 10~11자리)');
+                return;
+            }
+            if (!(partner?.businessType??'').trim()) {
+                alert('사업분야를 선택해주세요.');
                 return;
             }
             if (!(partner?.address??'').trim()) {
@@ -224,7 +226,7 @@ export default function AdminPartnerAdd() {
                                         <label className="form-label required">아이디</label>
                                         {isFormatValid === false && (
                                             <span className="text-primary">
-                                                - 아이디는 영문으로 시작하고, 영문+숫자 조합 4~12자여야 합니다.
+                                                - 영문으로 시작하고, 영문+숫자 조합 4~12자여야 합니다.
                                             </span>
                                         )}
                                         {checkClicked && isAvailable === true && (
@@ -239,7 +241,7 @@ export default function AdminPartnerAdd() {
                                         )}
                                         <div className="d-flex">
                                             <input name="partnerId" className="form-control form-control-solid me-3"
-                                                placeholder="영문, 숫자만 입력 6~15자리 입력" value={partner?.partnerId ?? ''}
+                                                placeholder="영문으로 시작하고, 영문+숫자 조합 4~12자여야 합니다." value={partner?.partnerId ?? ''}
                                                 onChange={handleChange}
                                                 type="input"
                                             />

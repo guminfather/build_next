@@ -281,7 +281,7 @@ export default function AdminCouponEdit({ params }: { params: Promise<{ id: stri
 											</div>
 										</div>
 									))}
-									{/*--------------------------------------------------------------------
+									{/*--------------------------------------------------------------------*/}
 									<div className="row mb-6">
 										<label className="col-lg-4 col-form-label required fw-semibold fs-6">템플릿 선택</label>
 										<div className="col-lg-8">
@@ -324,7 +324,7 @@ export default function AdminCouponEdit({ params }: { params: Promise<{ id: stri
 											</div>
 										</div>
 									</div>
-									*/}		
+									{/*--------------------------------------------------------------------*/}	
 
 
 									<div className="row mb-6">

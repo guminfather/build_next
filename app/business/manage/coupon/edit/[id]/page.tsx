@@ -214,15 +214,6 @@ export default function BusinessCouponEdit({ params }: { params: Promise<{ id: s
 									</div>
 
 
-
-
-
-
-
-
-
-
-
 									{/*--------------------------------------------------------------------*/}
 									<div className="row mb-6">
 										<label className="col-lg-4 col-form-label required fw-semibold fs-6">상품명</label>
@@ -250,10 +241,7 @@ export default function BusinessCouponEdit({ params }: { params: Promise<{ id: s
 											</div>
 										</div>
 									))}
-									{/*--------------------------------------------------------------------
-
-
-
+									{/*--------------------------------------------------------------------*/}
 
 
 									<div className="row mb-6">
@@ -298,7 +286,7 @@ export default function BusinessCouponEdit({ params }: { params: Promise<{ id: s
 											</div>
 										</div>
 									</div>
-									*/}
+									{/*--------------------------------------------------------------------*/}
 									<div className="row mb-6">
 										<label className="col-lg-4 col-form-label required fw-semibold fs-6">사용기간</label>
 										<div className="col-lg-8">

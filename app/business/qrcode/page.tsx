@@ -2,6 +2,14 @@
 import React from 'react';
 import { qrcodeCreate } from '@/lib/apis/common';
 
+
+/* 
+큐알코드 생성 페이지 - qrcodeCreate 함수 호출  
+
+테스트용
+*/
+
+
 export default function qrCode() {
 
     const handleSubmit = async (e: React.FormEvent) => {

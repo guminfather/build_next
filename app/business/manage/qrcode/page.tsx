@@ -17,8 +17,10 @@ export default function qrCodeUsed() {
 
             const result = await qrcodeUsed(queryId);
             if (result.success) {
+                alert("쿠폰사용 성공");
                 console.log("성공 : ", result.value)
             } else {
+                alert("쿠폰사용 실패");
                 console.log("실패 : ", result.message)
             }
         } catch (err) {

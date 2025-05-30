@@ -8,6 +8,7 @@ import { Partner } from '@/types/partner';
 import { useSignUpStore } from '@/stores/useSignUpStore';
 import { OptionType, SelectBusinessTypeOptions } from '@/types/select';
 import { register, fetchBusinessIdCheck, fetchBusinessCheck } from '@/lib/apis/common';
+import { usernameRegex, emailRegex, passwordRegex, phoneRegex } from '@/utils/regex';
 //import { saveTokens } from '@/lib/businessAuth';
 //import { setCookieName } from '@/lib/cookies';
 
@@ -57,36 +58,19 @@ export default function BusinessAdd() {
     const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
     const [checkClicked, setCheckClicked] = useState(false);
     const nameInputRef = useRef<HTMLInputElement>(null);
-    var [userId, setUserId] = useState("kejgogo");
-    var [businessName, setBusinessName] = useState("포테이토"); //회사명
-    var [pw, setPw] = useState("1111");
-    var [pwRe, setPwRe] = useState("1111");
-    var [tel, setTel] = useState("01092646071"); //연락처
-    var [email, setEmail] = useState("kejgogogo@naver.com"); //이메일
-    //var [zipcode, setZipcode] = useState("123456"); //주소
-    //var [addr1, setAddr1] = useState("경기도 김포시 김포한강2로 273");
-    //var [addr2, setAddr2] = useState("503동 1002호");
+    var [userId, setUserId] = useState("");
+    var [businessName, setBusinessName] = useState(""); //회사명
+    var [pw, setPw] = useState("");
+    var [pwRe, setPwRe] = useState("");
+    var [tel, setTel] = useState(""); //연락처
+    var [email, setEmail] = useState(""); //이메일
     var [zipcode, setZipcode] = useState(""); //주소
     var [addr1, setAddr1] = useState("");
     var [addr2, setAddr2] = useState("");
-    var [region, setRegion] = useState("서울");
+    var [region, setRegion] = useState("");
     var [businessType, setBusinessType] = useState("");
 
-    //*** 2. 회원가입 유효값 체크 필드
-    const [valid, setValid] = useState({
-        email: false,
-        password: false,
-        name: false,
-        phone: false,
-        id: false,
-    });
-
-    //*** 2. 회원가입 정규 표현식
-    const usernameRegex = /^[a-z][a-z0-9]{3,11}$/;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-    const phoneRegex = /^(01[016789]|070)\d{7,8}$/;
-
+    
     //1. 동의 체크박스 핸들러
     const handleAgreeCheckboxChange = (key: keyof typeof agreements) => {
         const newAgreements = {
@@ -150,12 +134,10 @@ export default function BusinessAdd() {
                 alert('아이디 중복 확인을 완료해주세요.');
                 return;
             }
-            /*
             if (!passwordRegex.test(pw)) { //비밀번호 검증	영문/숫자/특수문자 포함, 8자 이상
                 alert('비밀번호 형식이 올바르지 않습니다.\n(영문/숫자/특수문자 포함, 8자 이상)');
                 return;
             }
-            */
             if (pw != pwRe) { //비밀번호 검증	영문/숫자/특수문자 포함, 8자 이상
                 alert('비밀번호가 서로 일치 하지 않습니다.');
                 return;
@@ -166,6 +148,10 @@ export default function BusinessAdd() {
             }
             if (!phoneRegex.test(tel)) { //휴대폰 번호 검증	숫자만, 010으로 시작, 10~11자
                 alert('연락처 형식이 올바르지 않습니다.\n(010/011 등으로 시작, 숫자만, 10~11자리)');
+                return;
+            }
+            if (!businessType.trim()) {
+                alert('사업분야를 선택해주세요.');
                 return;
             }
             if (!addr1.trim()) {
@@ -184,7 +170,7 @@ export default function BusinessAdd() {
                 businessRegistrationNo: businessNumber,
                 phone: tel,		//전화번호
                 email: email,              // 이메일
-                businessType: '',       // 
+                businessType: businessType,       // 
                 region: region,             // 지역
                 address: addr1,            // 우편번호
                 addressDetail: addr2,      // 주소1
@@ -486,7 +472,7 @@ export default function BusinessAdd() {
                                                     placeholder="선택"
                                                     isSearchable={false}
                                                     onChange={(selected: SingleValue<OptionType>)=>{
-                                                        console.log(selected?.value); // 선택된 값
+                                                        //console.log(selected?.value); // 선택된 값
                                                         const value = selected?.value?.toString() || '';
                                                         setBusinessType(value);
                                                     }}

@@ -36,15 +36,6 @@ export default function AdminPartnerEdit({ params }: { params: Promise<{ id: str
 		setBizCheckResult(total > 0 ? '유효한 사업자입니다' : '유효하지 않습니다. 다시 입력후 조회해 주세요.');
 	};
 
-	//*** 2. 회원가입 유효값 체크 필드
-	const [valid, setValid] = useState({
-		email: false,
-		password: false,
-		name: false,
-		phone: false,
-		id: false,
-	});
-
 	const [selectedOptionValue, setSelectedOptionValue] = useState<OptionType | null>(null);
 
 	
@@ -54,6 +45,7 @@ export default function AdminPartnerEdit({ params }: { params: Promise<{ id: str
 			try {
 				const result = await fetchAdminPartnerDetail(id);
 				setPartner(result.value);
+				//업종 selectbox
 				const selectedOption = SelectBusinessTypeOptions.find(
 					(option) => option.value === result.value.businessType
 				);
@@ -118,8 +110,7 @@ export default function AdminPartnerEdit({ params }: { params: Promise<{ id: str
 				alert('상호명을 입력해주세요.');
 				return;
 			}
-			if (!(partner?.partnerPassword || '').trim() && !pwRe.trim()) {
-				/*
+			if ((partner?.partnerPassword || '').trim() && pwRe.trim()) {
 				if (!passwordRegex.test(partner?.partnerPassword || '')) { //비밀번호 검증	영문/숫자/특수문자 포함, 8자 이상
 					alert('비밀번호 형식이 올바르지 않습니다.\n(영문/숫자/특수문자 포함, 8자 이상)');
 					return;
@@ -127,7 +118,7 @@ export default function AdminPartnerEdit({ params }: { params: Promise<{ id: str
 				if (partner?.partnerPassword != pwRe) { //비밀번호 검증	영문/숫자/특수문자 포함, 8자 이상
 					alert('비밀번호가 서로 일치 하지 않습니다.');
 					return;
-				}*/
+				}
 			}	
 			if (!emailRegex.test(partner?.email ?? '')) { //이메일 검증	@ 포함, 일반 이메일 형식
 				alert('이메일 형식이 올바르지 않습니다.\n(@ 포함, 일반 이메일 형식)');
@@ -158,7 +149,7 @@ export default function AdminPartnerEdit({ params }: { params: Promise<{ id: str
 				addressDetail: partner?.addressDetail || '',
 				postalCode: partner?.postalCode || '',
 			}
-			console.log(newPartner)
+			//console.log(newPartner)
 
 			//사업자수정 API 호출
 			const result = await updatePartner(newPartner);
@@ -273,7 +264,7 @@ export default function AdminPartnerEdit({ params }: { params: Promise<{ id: str
 										value={selectedOptionValue}
 										isSearchable={false}
 										onChange={(selected: SingleValue<OptionType>) => {
-											console.log(selected?.value); // 선택된 값
+											//console.log(selected?.value); // 선택된 값
 											setSelectedOptionValue(selected); // 상태 반영
 											const value = selected?.value?.toString() || '';
 											setPartner(prev => ({ ...prev!, businessType: value })) //파트너 정보 담기기

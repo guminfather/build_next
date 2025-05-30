@@ -199,7 +199,7 @@ export default function AdminCouponAdd() {
 											>
 												<option value="">선택</option>
 												{partners.map((m, i) => (
-													<option value={m.partnerId} key={i}>{m.partnerId}/{m.partnerName}</option>
+													<option value={m.partnerId} key={i}>{m.partnerName} ({m.partnerId})</option>
 												))}
 											</select>
 										</div>
@@ -251,7 +251,7 @@ export default function AdminCouponAdd() {
 											</div>
 										</div>
 									))}
-									{/*--------------------------------------------------------------------
+									{/*--------------------------------------------------------------------*/}
 
 									<div className="row mb-6">
 										<label className="col-lg-4 col-form-label required fw-semibold fs-6">템플릿 선택</label>
@@ -290,7 +290,8 @@ export default function AdminCouponAdd() {
 												</div>
 											</div>
 										</div>
-									</div>*/}
+									</div>
+									{/*--------------------------------------------------------------------*/}
 									<div className="row mb-6">
 										<label className="col-lg-4 col-form-label required fw-semibold fs-6">사용기간</label>
 										<div className="col-lg-8">

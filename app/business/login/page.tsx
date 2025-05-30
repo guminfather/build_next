@@ -141,7 +141,9 @@ export default function LoginBusiness() {
                                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setUserPw(e.target.value) }} />
                                     </div>
                                     <div className="d-flex flex-stack flex-wrap gap-3 fs-base fw-semibold mb-8">
-                                        <div></div>
+                                        <div>
+                                            <input type="checkbox" id="rememberId" checked={autoLogin} onChange={() => setAutoLogin(!autoLogin)}/> 아이디 저장
+                                        </div>
                                         <a href="html/login/reset-password.html" className="link-primary">비밀번호를 잊으셨나요 ?</a>
                                     </div>
                                     <div className="d-grid mb-10">
@@ -178,4 +180,4 @@ export default function LoginBusiness() {
 
     );
 }
-{/* <input type="checkbox" id="rememberId" checked={autoLogin} onChange={() => setAutoLogin(!autoLogin)}/> 아이디 저장*/}
+{/* */}

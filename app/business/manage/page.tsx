@@ -7,8 +7,8 @@ import axios from 'axios';
 
 export default function Business() {
 
-    //const [couponUrl, setCouponUrl] = useState('http://localhost:3000/business/manage/qrcode?id=b021cc06-a27d-4b01-9c97-547e9d4232fd');
-    const [couponUrl, setCouponUrl] = useState('http://1.234.38.137:3000/business/manage/qrcode?id=b021cc06-a27d-4b01-9c97-547e9d4232fd');
+    const [couponUrl, setCouponUrl] = useState('http://localhost:3000/business/manage/qrcode?id=b021cc06-a27d-4b01-9c97-547e9d4232fd');
+    //const [couponUrl, setCouponUrl] = useState('http://1.234.38.137:3000/business/manage/qrcode?id=b021cc06-a27d-4b01-9c97-547e9d4232fd');
 
     const handleDownload = () => {
         const canvas = document.querySelector('canvas');
@@ -48,24 +48,31 @@ export default function Business() {
                 <div id="kt_app_content_container" className="app-container container-xxl">
                     <div className="card">
                         <div className="card-header align-items-center py-5 gap-2 gap-md-5">
-                            <a href="/business/qrcode">QR코드 생성</a> 
                             <div className="card-title">
-
                                 {
                                     couponUrl && (
                                         <div className="mt-6">
-                                            <h2> QR 코드 샘플</h2>
-                                            <QRCodeCanvas value={couponUrl} size={200} />
-                                            <p className="mt-2 text-sm"><a href={couponUrl}>{couponUrl}</a>
-                                            - 쿠폰사용하러 가기 
+                                            
+                                            <p className="mt-2 text-sm">
+                                                {'큐알코드는 http://localhost:3000/business/manage/qrcode?id={QR코드아이디값} 으로 만들었습니다.'}
                                             </p>
 
+                                            <QRCodeCanvas value="http://localhost:3000/business/manage/qrcode?id=7c3deed6-7a94-47f3-9e86-96453a2ea709" size={200} />
+                                            <p className="mt-2 text-sm">
+                                                <a href="http://localhost:3000/business/manage/qrcode?id=7c3deed6-7a94-47f3-9e86-96453a2ea709">
+                                                쿠폰사용 - http://localhost:3000/business/manage/qrcode?id=7c3deed6-7a94-47f3-9e86-96453a2ea709</a></p>
+
+                                            <QRCodeCanvas value="http://localhost:3000/business/manage/qrcode?id=5401cf14-25bc-4031-b2b6-729682882165" size={200} />
+                                            <p className="mt-2 text-sm">
+                                                <a href="http://localhost:3000/business/manage/qrcode?id=5401cf14-25bc-4031-b2b6-729682882165">
+                                                쿠폰사용 - http://localhost:3000/business/manage/qrcode?id=5401cf14-25bc-4031-b2b6-729682882165</a></p>
+                                            {/*
                                             <h2> QR 코드 샘플-더 선명함</h2>
                                             <QRCodeSVG value={couponUrl} size={200} />
-
                                             <button onClick={handleDownload}>
                                                 QR 코드 다운로드
                                             </button>
+                                            */}
                                         </div>
                                     )
                                 }

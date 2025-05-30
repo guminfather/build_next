@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 import { PartnerResponse, PartnerRequest } from '@/types/partner';
 import { OptionType, SelectBusinessTypeOptions } from '@/types/select';
-import { usernameRegex, emailRegex, passwordRegex, phoneRegex } from '@/utils/regex';
+import { emailRegex, passwordRegex, phoneRegex } from '@/utils/regex';
 import { fetchPartnerDetail, updatePartner, deletePartner } from '@/lib/apis/partner';
 import { getCookieBusinessId, removeBusinessTokensCookies } from '@/lib/businessAuth';
 
@@ -30,6 +30,7 @@ export default function PartnerEdit() {
 			try {
 				const result = await fetchPartnerDetail(partnerId);
 				setPartner(result.value);
+				//업종 selectbox
 				const selectedOption = SelectBusinessTypeOptions.find(
 					(option) => option.value === result.value.businessType
 				);
@@ -93,19 +94,18 @@ export default function PartnerEdit() {
 	//사업자수정 버튼 클릭 핸들러 (handleSubmit)
 	const handleSubmit = async () => {
 		try {
-			if (!(partner?.partnerPassword || '').trim() && !pwRe.trim()) {
-				/*
-				if (!passwordRegex.test(partner?.partnerPassword??'')) { //비밀번호 검증	영문/숫자/특수문자 포함, 8자 이상
+			console.log(partner?.partnerPassword);
+			if ((partner?.partnerPassword || '').trim() && pwRe.trim()) {
+				if (!passwordRegex.test(partner?.partnerPassword??'')) { //비밀번호 검증
 					alert('비밀번호 형식이 올바르지 않습니다.\n(영문/숫자/특수문자 포함, 8자 이상)');
 					return;
 				}
-				if (partner?.partnerPassword != pwRe) { //비밀번호 검증	영문/숫자/특수문자 포함, 8자 이상
+				if (partner?.partnerPassword != pwRe) { //비밀번호 검증
 					alert('비밀번호가 서로 일치 하지 않습니다.');
 					return;
-				}*/
+				}
 			}
-			console.log("2.----------------------------")
-            if (!emailRegex.test(partner?.email??'')) { //이메일 검증	@ 포함, 일반 이메일 형식
+			if (!emailRegex.test(partner?.email??'')) { //이메일 검증	@ 포함, 일반 이메일 형식
                 alert('이메일 형식이 올바르지 않습니다.\n(@ 포함, 일반 이메일 형식)');
                 return;
             }
@@ -135,7 +135,7 @@ export default function PartnerEdit() {
 				addressDetail: partner?.addressDetail || '',
 				postalCode: partner?.postalCode || '',
 			}
-			console.log("----------------------------", newPartner)
+			//console.log("----------------------------", newPartner)
 
 			//사업자수정 API 호출
 			const result = await updatePartner(newPartner);
