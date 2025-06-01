@@ -12,7 +12,7 @@ import { usernameRegex, emailRegex, passwordRegex, phoneRegex } from '@/utils/re
 export default function AdminPartnerAdd() {
 
     const router = useRouter();
-    
+
     const nameInputRef = useRef<HTMLInputElement>(null);
     const [partner, setPartner] = useState<PartnerResponse | null>(null);
     const [pwRe, setPwRe] = useState("");
@@ -25,7 +25,7 @@ export default function AdminPartnerAdd() {
 
     //*** 2. 사업자번호 확인 핸들들러(API)
     const handleBisunissCheck = async () => {
-        const total = await fetchBusinessCheck(partner?.businessRegistrationNo??'');
+        const total = await fetchBusinessCheck(partner?.businessRegistrationNo ?? '');
         setBusinessCheck(total > 0 ? true : false);
         setBizButtonCheck(true);
         setBizCheckResult(total > 0 ? '유효한 사업자입니다' : '유효하지 않습니다. 다시 입력후 조회해 주세요.');
@@ -104,15 +104,15 @@ export default function AdminPartnerAdd() {
                 alert('연락처 형식이 올바르지 않습니다.\n(010/011 등으로 시작, 숫자만, 10~11자리)');
                 return;
             }
-            if (!(partner?.businessType??'').trim()) {
+            if (!(partner?.businessType ?? '').trim()) {
                 alert('사업분야를 선택해주세요.');
                 return;
             }
-            if (!(partner?.address??'').trim()) {
+            if (!(partner?.address ?? '').trim()) {
                 alert('우편번호를 클릭해주세요.');
                 return;
             }
-            if (!(partner?.addressDetail??'').trim()) {
+            if (!(partner?.addressDetail ?? '').trim()) {
                 alert('상세주소를 입력해주세요');
                 return;
             }
@@ -124,7 +124,7 @@ export default function AdminPartnerAdd() {
                 phone: partner?.phone || '',
                 email: partner?.email || '',
                 businessType: partner?.businessType || '',
-                region: partner?.region || '',
+                region: partner?.address.slice(0, 2) || '',
                 address: partner?.address || '',
                 addressDetail: partner?.addressDetail || '',
                 postalCode: partner?.postalCode || '',
@@ -265,7 +265,23 @@ export default function AdminPartnerAdd() {
                                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setPwRe(e.target.value) }}
                                         />
                                     </div>
-                                    
+                                    <div className="fv-row mb-10">
+                                        <label className="col-lg-4 col-form-label required fw-semibold fs-6">구분</label>
+                                        <div className="d-flex align-items-center mt-3">
+                                            <label className="form-check form-check-custom form-check-inline form-check-solid me-5">
+                                                <input name="partnerType" type="radio" className="form-check-input me-3" id="kt_modal_update_role_option_0"
+                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setPartner(prev => ({ ...prev!, partnerType: 1 })) }} />
+                                                <span className="fw-semibold ps-2 fs-6">일반</span>
+                                            </label>
+                                            <label className="form-check form-check-custom form-check-inline form-check-solid">
+                                                <input name="partnerType" type="radio" className="form-check-input me-3" id="kt_modal_update_role_option_1"
+                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setPartner(prev => ({ ...prev!, partnerType: 2 })) }} />
+                                                <span className="fw-semibold ps-2 fs-6">인플루엔서</span>
+                                            </label>
+                                        </div>
+
+
+                                    </div>
                                     <div className="fv-row mb-10">
                                         <label className="fs-6 fw-semibold form-label required">Email </label>
                                         <input className="form-control form-control-lg form-control-solid" placeholder="이메일 주소 (@포함)"
@@ -327,6 +343,7 @@ export default function AdminPartnerAdd() {
                                             }}
                                         />
                                     </div>
+
                                     <div className="fv-row mb-10">
                                         <label className="form-label required">주소</label>
                                         <div className="d-flex mb-3">

@@ -171,7 +171,7 @@ export default function BusinessAdd() {
                 phone: tel,		//전화번호
                 email: email,              // 이메일
                 businessType: businessType,  // 
-                region: region,             // 지역
+                region: addr1.slice(0, 2), // 지역
                 address: addr1,            // 주소1
                 addressDetail: addr2,      // 주소2
                 postalCode: zipcode,         // 우편번호

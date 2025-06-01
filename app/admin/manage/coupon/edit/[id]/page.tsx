@@ -145,7 +145,30 @@ export default function AdminCouponEdit({ params }: { params: Promise<{ id: stri
 				alert('할인율은 (0~100) 입니다. 형식이 올바르지 않습니다.');
 				return;
 			}
+			const usageStartDate = new Date(coupon?.usageStartDate);
+			const usageEndDate = new Date(coupon?.usageEndDate);
+			const issueStartDate = new Date(coupon?.issueStartDate);
+			const issueEndDate = new Date(coupon?.issueEndDate);
 
+			if (usageStartDate > usageEndDate) {
+				alert('사용기간 시작일은 종료일보다 늦을 수 없습니다.');
+				return false;
+			}
+
+			if (issueStartDate > issueEndDate) {
+				alert('발급기간 시작일은 종료일보다 늦을 수 없습니다.');
+				return false;
+			}
+
+			if (usageEndDate < issueEndDate) {
+				alert('사용기간 종료일은 발급기간 종료일보다 같거나 늦어야 합니다.');
+				return false;
+			}
+
+			if (usageStartDate < issueStartDate) {
+				alert('사용기간 시작일은 발급기간 시작일보다 같거나 늦어야 합니다.');
+				return false;
+			}
 			/*
 			//상품 최소 한개 이상 입력
 			const names = couponProducts.map(p => p.name.trim()).filter(name => name.length > 0)
@@ -171,7 +194,7 @@ export default function AdminCouponEdit({ params }: { params: Promise<{ id: stri
 				productNames: coupon?.productNames && (coupon.productNames).length > 0 ?
 					coupon.productNames : []
 			}
-			
+
 			//쿠폰수정 API 호출
 			const result = await updateCoupon(newCoupon);
 			if (result.success) {
@@ -324,7 +347,7 @@ export default function AdminCouponEdit({ params }: { params: Promise<{ id: stri
 											</div>
 										</div>
 									</div>
-									{/*--------------------------------------------------------------------*/}	
+									{/*--------------------------------------------------------------------*/}
 
 
 									<div className="row mb-6">
@@ -388,7 +411,7 @@ export default function AdminCouponEdit({ params }: { params: Promise<{ id: stri
 									</div>
 								</div>
 								<div className="card-footer d-flex justify-content-end py-6 px-9">
-									<button type="button" onClick={handleDelete} className="btn btn-light btn-active-light-primary me-2">쿠폰폰삭제</button>
+									<button type="button" onClick={handleDelete} className="btn btn-light btn-active-light-primary me-2">쿠폰삭제</button>
 									<button type="button" onClick={handleSubmit} className="btn btn-primary" id="kt_account_profile_details_submit">쿠폰수정</button>
 									<button type="button" onClick={() => {
 										router.push(`../list?${searchParams.toString()}`); //목록

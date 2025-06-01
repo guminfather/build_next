@@ -6,7 +6,7 @@ import { getCookieName } from '@/lib/cookies';
 import { CouponResponse, CouponRequest, CouponProduct } from '@/types/coupon';
 import { hasText } from '@/utils/common';
 import { dateRegex, discountRegex } from '@/utils/regex';
-import { fetchPartnerCouponDetail, updateCoupon } from '@/lib/apis/partner';
+import { fetchPartnerCouponDetail, updateCoupon, deleteCoupon } from '@/lib/apis/partner';
 
 import "../../../../../css/fullcalendar.bundle.css";
 import "../../../../../css/datatables.bundle.css";
@@ -109,9 +109,34 @@ export default function BusinessCouponEdit({ params }: { params: Promise<{ id: s
 				alert('발급기간 형식이 올바르지 않습니다.');
 				return;
 			}
-			if (!discountRegex.test(String(Number(coupon?.discountRate||0)))) { //할인율
+			if (!discountRegex.test(String(Number(coupon?.discountRate || 0)))) { //할인율
 				alert('할인율은 (0~100) 입니다. 형식이 올바르지 않습니다.');
 				return;
+			}
+
+			const usageStartDate = new Date(coupon?.usageStartDate || '');
+			const usageEndDate = new Date(coupon?.usageEndDate || '');
+			const issueStartDate = new Date(coupon?.issueStartDate || '');
+			const issueEndDate = new Date(coupon?.issueEndDate || '');
+
+			if (usageStartDate > usageEndDate) {
+				alert('사용기간 시작일은 종료일보다 늦을 수 없습니다.');
+				return false;
+			}
+
+			if (issueStartDate > issueEndDate) {
+				alert('발급기간 시작일은 종료일보다 늦을 수 없습니다.');
+				return false;
+			}
+
+			if (usageEndDate < issueEndDate) {
+				alert('사용기간 종료일은 발급기간 종료일보다 같거나 늦어야 합니다.');
+				return false;
+			}
+
+			if (usageStartDate < issueStartDate) {
+				alert('사용기간 시작일은 발급기간 시작일보다 같거나 늦어야 합니다.');
+				return false;
 			}
 
 			/*
@@ -144,7 +169,7 @@ export default function BusinessCouponEdit({ params }: { params: Promise<{ id: s
 			const result = await updateCoupon(newCoupon);
 			if (result.success) {
 				alert(`쿠폰을 수정 하였습니다.`);
-				router.push(`../${coupon?.couponId}?${searchParams.toString()}`); //페이지 이동
+				router.push(`../list?${searchParams.toString()}`); //페이지 이동
 			} else {
 				alert(result.message);
 				return;
@@ -155,6 +180,24 @@ export default function BusinessCouponEdit({ params }: { params: Promise<{ id: s
 			alert('쿠폰생성 실패');
 		}
 	};
+
+
+	const handleDelete = async () => {
+		if (!confirm(" 쿠폰을 정말 삭제 하시겠습니까? ")) return;
+		try {
+			const result = await deleteCoupon(Number(id));
+			if (result.success) {
+				alert(`쿠폰을 삭제 하였습니다.`);
+				router.push(`../list`); //페이지 이동
+			} else {
+				alert(result.message);
+				return;
+			}
+		} catch (error) {
+			console.error("데이터 삭제 실패:", error);
+		}
+	};
+
 
 	return (
 		<>
@@ -348,6 +391,7 @@ export default function BusinessCouponEdit({ params }: { params: Promise<{ id: s
 									</div>
 								</div>
 								<div className="card-footer d-flex justify-content-end py-6 px-9">
+									<button type="button" onClick={handleDelete} className="btn btn-light btn-active-light-primary me-2">삭제</button>
 									<button type="button" onClick={handleSubmit} className="btn btn-primary" id="kt_account_profile_details_submit">쿠폰수정</button>
 									<button type="button" onClick={() => {
 										router.push(`../list?${searchParams.toString()}`); //목록

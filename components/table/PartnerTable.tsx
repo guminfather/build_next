@@ -119,7 +119,7 @@ export default function PartnerTable({ partners, total, currentPage, pageSize, s
                                 </td>
                                 <td>{m.businessRegistrationNo}</td>
                                 <td>{m.businessType}</td>
-                                <td>{m.region}</td>
+                                <td>{m.address.slice(0, 2)}</td>
                             </tr>
                         ))}
                     </tbody>

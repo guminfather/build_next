@@ -130,7 +130,7 @@ export default function PartnerEdit() {
 				phone: partner?.phone || '',
 				email: partner?.email || '',
 				businessType: partner?.businessType || '',
-				region: partner?.region || '',
+				region: partner?.address.slice(0, 2) || '',
 				address: partner?.address || '',
 				addressDetail: partner?.addressDetail || '',
 				postalCode: partner?.postalCode || '',

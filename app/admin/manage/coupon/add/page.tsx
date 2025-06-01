@@ -120,9 +120,30 @@ export default function AdminCouponAdd() {
 				alert('할인율은 (0~100) 입니다. 형식이 올바르지 않습니다.');
 				return;
 			}
-			//console.log("productNames : ", productNames);
-			//console.log("productNames.length : ", productNames.length);
-			//console.log("names : ", names);
+			const usageSDate = new Date(usageStartDate);
+			const usageEDate = new Date(usageEndDate);
+			const issueSDate = new Date(issueStartDate);
+			const issueEDate = new Date(issueEndDate);
+
+			if (usageSDate > usageEDate) {
+				alert('사용기간 시작일은 종료일보다 늦을 수 없습니다.');
+				return false;
+			}
+
+			if (issueSDate > issueEDate) {
+				alert('발급기간 시작일은 종료일보다 늦을 수 없습니다.');
+				return false;
+			}
+
+			if (usageEDate < issueEDate) {
+				alert('사용기간 종료일은 발급기간 종료일보다 같거나 늦어야 합니다.');
+				return false;
+			}
+
+			if (usageSDate < issueSDate) {
+				alert('사용기간 시작일은 발급기간 시작일보다 같거나 늦어야 합니다.');
+				return false;
+			}
 			/*
 			//상품 최소 한개 이상 입력
 			const names = couponProducts.map(p => p.name.trim()).filter(name => name.length > 0)
