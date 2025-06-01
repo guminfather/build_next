@@ -106,7 +106,7 @@ export default function LoginAdmin() {
                             <div className="w-lg-500px p-10">
                                 <form onSubmit={handleLogin} className="form w-100" noValidate id="kt_sign_in_form">
                                     <div className="text-center mb-11">
-                                        <h1 className="text-dark fw-bolder mb-3">관리자 로그인</h1>
+                                        <h1 className="text-dark fw-bolder mb-3">관리자 로그인1</h1>
                                         <div className="text-gray-500 fw-semibold fs-6">Administrator Mode</div>
                                     </div>
                                     <div className="fv-row mb-8">
