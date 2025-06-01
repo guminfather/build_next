@@ -12471,6 +12471,11 @@ fieldset:disabled .btn {
     color: var(--bs-secondary-color) !important
 }
 
+.text-coupon {
+    --bs-text-opacity: 1;
+    color: rgba(var(--bs-bs-text-coupon), var(--bs-text-opacity)) !important
+}
+
 .text-black-50 {
     --bs-text-opacity: 1;
     color: rgba(0, 0, 0, .5) !important
@@ -34497,6 +34502,7 @@ fieldset:disabled .btn {
     --bs-warning-rgb: 255, 199, 0;
     --bs-danger-rgb: 241, 65, 108;
     --bs-dark-rgb: 7, 20, 55;
+    --bs-text-coupon: #dabdff;
     --bs-text-white: #ffffff;
     --bs-text-primary: #3E97FF;
     --bs-text-secondary: #DBDFE9;
