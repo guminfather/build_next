@@ -128,6 +128,7 @@ export default function AdminPartnerAdd() {
                 address: partner?.address || '',
                 addressDetail: partner?.addressDetail || '',
                 postalCode: partner?.postalCode || '',
+                partnerType: partner?.partnerType || 1,
             }
             console.log(newPartner)
 
@@ -264,6 +265,7 @@ export default function AdminPartnerAdd() {
                                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setPwRe(e.target.value) }}
                                         />
                                     </div>
+                                    
                                     <div className="fv-row mb-10">
                                         <label className="fs-6 fw-semibold form-label required">Email </label>
                                         <input className="form-control form-control-lg form-control-solid" placeholder="이메일 주소 (@포함)"

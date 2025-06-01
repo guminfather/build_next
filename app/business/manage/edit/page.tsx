@@ -134,6 +134,7 @@ export default function PartnerEdit() {
 				address: partner?.address || '',
 				addressDetail: partner?.addressDetail || '',
 				postalCode: partner?.postalCode || '',
+				partnerType: partner?.partnerType || 1,
 			}
 			//console.log("----------------------------", newPartner)
 

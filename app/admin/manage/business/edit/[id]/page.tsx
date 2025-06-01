@@ -148,6 +148,7 @@ export default function AdminPartnerEdit({ params }: { params: Promise<{ id: str
 				address: partner?.address || '',
 				addressDetail: partner?.addressDetail || '',
 				postalCode: partner?.postalCode || '',
+				partnerType: partner?.partnerType || 1,
 			}
 			//console.log(newPartner)
 

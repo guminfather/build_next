@@ -170,11 +170,12 @@ export default function BusinessAdd() {
                 businessRegistrationNo: businessNumber,
                 phone: tel,		//전화번호
                 email: email,              // 이메일
-                businessType: businessType,       // 
+                businessType: businessType,  // 
                 region: region,             // 지역
-                address: addr1,            // 우편번호
-                addressDetail: addr2,      // 주소1
-                postalCode: zipcode,         // 주소2
+                address: addr1,            // 주소1
+                addressDetail: addr2,      // 주소2
+                postalCode: zipcode,         // 우편번호
+                partnerType: 1,
             };
             //회원가입 API 호출
             const result = await register(newPartner);
