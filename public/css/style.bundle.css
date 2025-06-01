@@ -12473,7 +12473,7 @@ fieldset:disabled .btn {
 
 .text-coupon {
     --bs-text-opacity: 1;
-    color: rgba(var(--bs-bs-text-coupon), var(--bs-text-opacity)) !important
+    color: var(--bs-text-coupon) !important
 }
 
 .text-black-50 {
