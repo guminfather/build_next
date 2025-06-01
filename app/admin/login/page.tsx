@@ -96,7 +96,7 @@ export default function LoginAdmin() {
                             <a href="/admin/manage" className="mb-0 mb-lg-20">
                                 <img alt="Logo" src="/images/logo/default-dark.svg" className="h-40px h-lg-50px" />
                             </a>
-                            <h1 className="d-none d-lg-block text-white fs-2qx fw-bold text-center mb-7"><span className="fs-3qx text-coupon">L</span>ocal <span className="fs-3qx text-coupon">C</span>oupon <span class="fs-3qx text-coupon">S</span>ystem</h1>
+                            <h1 className="d-none d-lg-block text-white fs-2qx fw-bold text-center mb-7"><span className="fs-3qx text-coupon">L</span>ocal <span className="fs-3qx text-coupon">C</span>oupon <span className="fs-3qx text-coupon">S</span>ystem</h1>
                             <img className="d-none d-lg-block mx-auto w-300px w-lg-75 w-xl-400px mb-10 mb-lg-20" src="/images/login/auth-screens.png" alt="" />
                             <h2 className="d-none d-lg-block text-white fs-2qx fw-bold text-center mb-7">HYPER GLOCAL SNS</h2>
                             <div className="d-none d-lg-block text-white fs-base text-center">On The Real World 1:1 Mapping Virtual Land With Local Contents.</div>
