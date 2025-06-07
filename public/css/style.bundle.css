@@ -34987,9 +34987,9 @@ h6 {
 }
 
 .nav-group {
-    padding: .35rem;
+    /* padding: .35rem; */
     border-radius: .475rem;
-    background-color: var(--bs-gray-100)
+    /* background-color: var(--bs-gray-100) */
 }
 
 .nav-group.nav-group-outline {
@@ -35010,7 +35010,7 @@ h6 {
 }
 
 .nav-group.nav-group-fluid>label {
-    margin-right: .1rem
+    margin-right: .4rem
 }
 
 .nav-group.nav-group-fluid>label>.btn {
@@ -43908,7 +43908,8 @@ h6 {
 }
 
 .btn.btn-color-muted {
-    color: var(--bs-text-muted)
+    color: var(--bs-text-muted);
+    background-color: var(--bs-gray-100);
 }
 
 .btn.btn-color-muted .svg-icon,
