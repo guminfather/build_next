@@ -365,6 +365,28 @@ export default function AdminCouponEdit({ params }: { params: Promise<{ id: stri
 														value={coupon?.usageEndDate || ''} />
 												</div>
 											</div>
+											<div className="nav-group nav-group-fluid mt-2">
+												<label>
+													<input type="radio" className="btn-check" name="type" value="has" />
+													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">07일</span>
+												</label>
+												<label>
+													<input type="radio" className="btn-check" name="type" value="users" />
+													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">15일</span>
+												</label>
+												<label>
+													<input type="radio" className="btn-check" name="type" value="month" />
+													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">1개월</span>
+												</label>
+												<label>
+													<input type="radio" className="btn-check" name="type" value="3month" />
+													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">3개월</span>
+												</label>
+												<label>
+													<input type="radio" className="btn-check" name="type" value="6month" />
+													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">6개월</span>
+												</label>
+											</div>
 										</div>
 									</div>
 									<div className="row mb-6">
@@ -381,6 +403,28 @@ export default function AdminCouponEdit({ params }: { params: Promise<{ id: stri
 														onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setCoupon(prev => ({ ...prev!, issueEndDate: e.target.value })) }}
 														value={coupon?.issueEndDate || ''} />
 												</div>
+											</div>
+											<div className="nav-group nav-group-fluid mt-2">
+												<label>
+													<input type="radio" className="btn-check" name="type1" value="has" />
+													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">07일</span>
+												</label>
+												<label>
+													<input type="radio" className="btn-check" name="type1" value="users" />
+													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">15일</span>
+												</label>
+												<label>
+													<input type="radio" class="btn-check" name="type1" value="month" />
+													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">1개월</span>
+												</label>
+												<label>
+													<input type="radio" className="btn-check" name="type1" value="3month" />
+													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">3개월</span>
+												</label>
+												<label>
+													<input type="radio" className="btn-check" name="type1" value="6month" />
+													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">6개월</span>
+												</label>
 											</div>
 										</div>
 									</div>
