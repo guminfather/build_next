@@ -326,6 +326,7 @@ export default function AdminCoupons() {
                         </div>
                         <div className="card-footer d-flex justify-content-end py-6 px-9">
 							<button type="button" className="btn btn-light btn-active-light-primary me-2">선택삭제</button>
+                            <button type="button" className="btn btn-primary" id="kt_account_profile_details_submit">쿠폰등록</button>
                         </div>
                     </div>
                 </div>
