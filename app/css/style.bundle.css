@@ -40388,6 +40388,13 @@ h6 {
     flex-wrap: wrap
 }
 
+.card .card-header .card-toolbar .absolute {
+    position: absolute;
+    width:200px;
+    padding:10px;
+    z-index: 100
+}
+
 .card .card-body {
     padding: 2rem 2.25rem;
     color: var(--bs-card-color)
