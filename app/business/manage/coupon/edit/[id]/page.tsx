@@ -394,7 +394,7 @@ export default function BusinessCouponEdit({ params }: { params: Promise<{ id: s
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">15일</span>
 												</label>
 												<label>
-													<input type="radio" class="btn-check" name="type1" value="month" />
+													<input type="radio" className="btn-check" name="type1" value="month" />
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">1개월</span>
 												</label>
 												<label>
