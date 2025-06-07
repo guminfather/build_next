@@ -61,7 +61,7 @@ export default function PartnerCouponTable({ coupons, total, currentPage, pageSi
 
     return (
         <div id="kt_ecommerce_report_views_table_wrapper" className="dataTables_wrapper dt-bootstrap4 no-footer">
-
+            {/*
             <div className="mb-2">
                 <span className="ms-3 text-muted">총 {total}개</span>
                 <button
@@ -73,7 +73,7 @@ export default function PartnerCouponTable({ coupons, total, currentPage, pageSi
                 </button>
 
             </div>
-
+             */}    
             <div className="table-responsive">
                 <table className="table align-middle table-row-dashed fs-6 gy-5" id="kt_ecommerce_report_views_table">
                     <thead>
