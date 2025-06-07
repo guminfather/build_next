@@ -12471,6 +12471,11 @@ fieldset:disabled .btn {
     color: var(--bs-secondary-color) !important
 }
 
+.text-coupon {
+    --bs-text-opacity: 1;
+    color: var(--bs-text-coupon) !important
+}
+
 .text-black-50 {
     --bs-text-opacity: 1;
     color: rgba(0, 0, 0, .5) !important
@@ -34984,6 +34989,7 @@ h6 {
 .nav-group {
     /* padding: .35rem; */
     border-radius: .475rem;
+    /*background-color: var(--bs-gray-100)*/
 }
 
 .nav-group.nav-group-outline {
@@ -35004,7 +35010,7 @@ h6 {
 }
 
 .nav-group.nav-group-fluid>label {
-    margin-right: .4rem
+    margin-right: .4em
 }
 
 .nav-group.nav-group-fluid>label>.btn {
@@ -40387,14 +40393,6 @@ h6 {
     flex-wrap: wrap
 }
 
-.card .card-header .card-toolbar .absolute {
-    position: absolute;
-    width:200px;
-    padding:10px;
-    border-radius: .475rem;
-    z-index: 100
-}
-
 .card .card-body {
     padding: 2rem 2.25rem;
     color: var(--bs-card-color)
@@ -43911,7 +43909,7 @@ h6 {
 
 .btn.btn-color-muted {
     color: var(--bs-text-muted);
-    border: 1px solid #eee !important
+    border: 1px solid #eee !important;
 }
 
 .btn.btn-color-muted .svg-icon,
@@ -57894,11 +57892,6 @@ label.rating-label:hover~.rating-label>i {
 
 .text-muted {
     color: var(--bs-text-muted) !important
-}
-
-.text-coupon {
-    --bs-text-opacity: 1;
-    color: var(--bs-text-coupon) !important
 }
 
 .text-hover-muted {
