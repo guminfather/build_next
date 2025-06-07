@@ -34982,9 +34982,8 @@ h6 {
 }
 
 .nav-group {
-    padding: .35rem;
+    /* padding: .35rem; */
     border-radius: .475rem;
-    background-color: var(--bs-gray-100)
 }
 
 .nav-group.nav-group-outline {
@@ -43911,7 +43910,8 @@ h6 {
 }
 
 .btn.btn-color-muted {
-    color: var(--bs-text-muted)
+    color: var(--bs-text-muted);
+    border: 1px solid #eee !important
 }
 
 .btn.btn-color-muted .svg-icon,
