@@ -213,7 +213,7 @@ export default function AdminCouponAdd() {
 										<label className="col-lg-4 col-form-label fw-semibold fs-6">상호</label>
 										<div className="col-lg-8 fv-row">
 											<select name="partnerId" value={partnerId}
-												className="form-select form-select-sm form-select-solid"
+												className="form-select form-select-solid"
 												onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
 													setPartnerId(e.target.value)
 												}}
