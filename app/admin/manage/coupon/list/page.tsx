@@ -323,6 +323,9 @@ export default function AdminCoupons() {
                                     }}
                                 />
                             </div>
+                            <div className="card-footer d-flex justify-content-end py-6 px-9">
+								<button type="button" onClick={handleDelete} className="btn btn-light btn-active-light-primary me-2">선택삭제</button>
+                            </div>
                         </div>
                     </div>
                 </div>
