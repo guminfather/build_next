@@ -18,7 +18,7 @@ export default function RootLayout({
                 <link rel="canonical" href="https://preview.keenthemes.com/keen" />
                 
                 {/* Favicon (중복되더라도 안전하게 처리) */}
-                <link rel="shortcut icon" href="/favicon.png" />
+                <link rel="shortcut icon" href="./images/logo/favicon.ico" />
                 
                 {/* Fonts */}
                 <link href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" rel="stylesheet"/>
