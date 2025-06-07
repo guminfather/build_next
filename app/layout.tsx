@@ -57,9 +57,9 @@ export const metadata = {
     },*/
 
     icons: {
-        icon: "/favicon.png", // 이것만으로는 때때로 불완전할 수 있음
-        shortcut: "/favicon.png",
-        apple: "/favicon.png",
+        icon: "/images/logo/favicon.ico", // 이것만으로는 때때로 불완전할 수 있음
+        shortcut: "/images/logo/favicon.ico",
+        apple: "/images/logo/favicon.ico",
     },
 
     openGraph: {
