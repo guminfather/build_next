@@ -11,7 +11,7 @@ export default function PwFindBusiness() {
     var [email, setEmail] = useState("");
     var [errerTxt, setErrerTxt] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [form, setForm] = useState({ name: '', email: '', message: '' });
+    
     
     //비밀번호 찾기 버튼 클릭 핸들러 (handleLogin)
     const handleLogin = async (e: React.FormEvent) => {
@@ -34,26 +34,27 @@ export default function PwFindBusiness() {
                 console.log("result" , result.value)
                 
                 //메일세팅
-                setForm({
+                const emailData = {
                     name: `${name} 고객님`,
                     email: email,
                     message: `<p>안녕하세요 <strong>${name}</strong>님,</p>
-                                <p>요청하신 <span style="color:blue;">임시 비밀번호</span>는 다음과 같습니다:</p>
-                                <h2 style="color:red;">${pw}</h2>
-                                <p>로그인 후 반드시 비밀번호를 변경해주세요.</p>`
-                });
+                            <p>요청하신 <span style="color:blue;">임시 비밀번호</span>는 다음과 같습니다:</p>
+                            <h2 style="color:red;">${pw}</h2>
+                            <p>로그인 후 반드시 비밀번호를 변경해주세요.</p>`
+                };
+
                 //임시비밀번호 메일 발송
                 const res = await fetch('/api/send-email', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(form),
+                    body: JSON.stringify(emailData),
                 });
                 if (res.ok) {
-                    setLoading(true)
+                    setLoading(false)
                     alert(`입력하신 메일로 임시 비밀번호를 보내드렸습니다.`);
                     router.push("/business/login");
                 } else {
-                    setLoading(true)
+                    setLoading(false)
                     alert('메일 전송에 실패했습니다.');
                 }  
             } else {
