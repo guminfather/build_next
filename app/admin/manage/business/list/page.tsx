@@ -103,10 +103,10 @@ export default function AdminPartners() {
 
     //데이타 로딩 함수호출
     useEffect(() => {
-        const queryPage = parseInt(params.get('page') || '1', 10);
-        const queryPageSize = parseInt(params.get('pageSize') || '10', 10);
-        const querySearchText = params.get('searchText') || '';
-        const querySearchType = params.get('searchType') || '';
+        const queryPage = parseInt(params?.get('page') || '1', 10);
+        const queryPageSize = parseInt(params?.get('pageSize') || '10', 10);
+        const querySearchText = params?.get('searchText') || '';
+        const querySearchType = params?.get('searchType') || '';
         setSearchText(querySearchText);
         setSearchType(querySearchType);
         setPage(queryPage);

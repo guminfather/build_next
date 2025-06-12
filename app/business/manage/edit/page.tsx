@@ -17,6 +17,7 @@ export default function PartnerEdit() {
 	const partnerId = getCookieBusinessId() + '';
 	const router = useRouter();
 	const searchParams = useSearchParams();
+	const queryString = (searchParams as unknown as URLSearchParams).toString();
 
 	const nameInputRef = useRef<HTMLInputElement>(null);
 	const [partner, setPartner] = useState<PartnerResponse | null>(null);

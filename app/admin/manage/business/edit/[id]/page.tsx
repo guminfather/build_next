@@ -17,6 +17,7 @@ export default function AdminPartnerEdit({ params }: { params: Promise<{ id: str
 	const { id } = use(params);
 	const router = useRouter();
 	const searchParams = useSearchParams();
+	const queryString = (searchParams as unknown as URLSearchParams).toString();
 
 	const nameInputRef = useRef<HTMLInputElement>(null);
 	const [partner, setPartner] = useState<PartnerResponse | null>(null);
@@ -157,7 +158,7 @@ export default function AdminPartnerEdit({ params }: { params: Promise<{ id: str
 			const result = await updatePartner(newPartner);
 			if (result.success) {
 				alert(`사업자 정보를 수정 하였습니다.`);
-				router.push(`../list?${searchParams.toString()}`); //페이지 이동
+				router.push(`../list?${queryString}`); //페이지 이동
 			} else {
 				alert(result.message);
 				return;
@@ -352,7 +353,7 @@ export default function AdminPartnerEdit({ params }: { params: Promise<{ id: str
 								<button type="button" onClick={handleDelete} className="btn btn-light btn-active-light-primary me-2">탈퇴</button>
 								<button type="button" onClick={handleSubmit} className="btn btn-primary  me-2" id="kt_account_profile_details_submit">수정</button>
 								<button type="button" onClick={() => {
-									router.push(`../list?${searchParams.toString()}`); //페이지 이동
+									router.push(`../list?${queryString}`); //페이지 이동
 								}} className="btn btn-light btn-active-light-primary me-2">목록</button>
 
 

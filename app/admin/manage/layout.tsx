@@ -60,10 +60,10 @@ export default function AdminLayout({ children, }: Readonly<{ children: React.Re
     //메뉴 볼드 처리 
     useEffect(() => {
         //사업자메뉴
-        if (pathname.includes("business")) {
+        if (pathname?.includes("business")) {
             setMenus([false, true, false, false, false]);
         //쿠폰 메뉴
-        } else if (pathname.includes("coupon")) {
+        } else if (pathname?.includes("coupon")) {
             setMenuShow(true);
             if (pathname.includes("add")) {
                 setMenus([false, false, false, true, false]);

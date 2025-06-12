@@ -13,6 +13,7 @@ export default function AdminCouponDetail({ params }: { params: Promise<{ id: st
     const { id } = use(params);
     const router = useRouter();
     const searchParams = useSearchParams();
+    const queryString = (searchParams as unknown as URLSearchParams).toString();
 
     const [coupon, setCoupon] = useState<CouponResponse | null>(null);
 
@@ -180,7 +181,7 @@ export default function AdminCouponDetail({ params }: { params: Promise<{ id: st
                                     <button type="button" onClick={handleDelete} className="btn btn-light btn-active-light-primary me-2">삭제</button>
                                     <button type="button" className="btn btn-light btn-active-light-primary me-2"
                                         onClick={() => { //수정
-                                                router.push(`./edit/${id}?${searchParams.toString()}`);
+                                                router.push(`./edit/${id}?${queryString}`);
                                         }}>
                                     수정</button>
                                     <button type="button" className="btn btn-primary" id="kt_account_profile_details_submit" 
@@ -190,7 +191,7 @@ export default function AdminCouponDetail({ params }: { params: Promise<{ id: st
                                     쿠폰발급</button>
                                     <button type="button" className="btn btn-light btn-active-light-primary me-2"
                                         onClick={() => { //목록
-                                                router.push(`./list?${searchParams.toString()}`); 
+                                                router.push(`./list?${queryString}`); 
                                         }}>
                                     목록</button>
                                 </div>

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Partner } from '@/types/partner';
+import { Partner, PartnerResponse } from '@/types/partner';
 import { parseStringPromise } from 'xml2js';
 import axiosInstance from '@/lib/apis/axiosInstance';
 
@@ -13,6 +13,18 @@ export const fetchBusinessIdCheck = async (id: string) => {
     try {
         const res = await axiosInstance.get<{ isnt: number }>(`/api/auth/partner/isnt/${id}`);
         return { success: true, value: res.data.isnt };
+    } catch (error: any) {
+        const message = error.response?.data?.error || "서버 오류가 발생했습니다.";
+        return { success: false, message };
+    }
+};
+
+// 사업자 이메일 존재 여부 확인후 임의 비밀번호 변경
+export const businessEmailFindPwdUpdate = async (email: string) => {
+    try {
+        const res = await axiosInstance.get<{ partnerName : string, partnerPassword: string }>(`/api/auth/partner/emailfindpwdupdate/${email}`);
+        return { success: true, value: {name : res.data?.partnerName, pw:res.data?.partnerPassword} }; //변경된 비밀번호및 정보
+
     } catch (error: any) {
         const message = error.response?.data?.error || "서버 오류가 발생했습니다.";
         return { success: false, message };

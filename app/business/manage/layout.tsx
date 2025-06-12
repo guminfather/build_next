@@ -62,7 +62,7 @@ export default function BusinessLayout({ children }: Readonly<{ children: React.
 
     //메뉴 bold 처리
     useEffect(() => {
-        if (pathname.includes("coupon")) {
+        if (pathname?.includes("coupon")) {
             setMenuShow(true);
             if (pathname.includes("add")) {
                 setMenus([false, false, true]);

@@ -20,6 +20,7 @@ export default function BusinessCouponEdit({ params }: { params: Promise<{ id: s
 	const { id } = use(params);
 	const router = useRouter();
 	const searchParams = useSearchParams();
+	const queryString = (searchParams as unknown as URLSearchParams).toString();
 
 	const nameInputRef = useRef<HTMLInputElement>(null);
 	const [coupon, setCoupon] = useState<CouponResponse | null>(null);
@@ -169,7 +170,7 @@ export default function BusinessCouponEdit({ params }: { params: Promise<{ id: s
 			const result = await updateCoupon(newCoupon);
 			if (result.success) {
 				alert(`쿠폰을 수정 하였습니다.`);
-				router.push(`../list?${searchParams.toString()}`); //페이지 이동
+				router.push(`../list?${queryString}`); //페이지 이동
 			} else {
 				alert(result.message);
 				return;
@@ -438,7 +439,7 @@ export default function BusinessCouponEdit({ params }: { params: Promise<{ id: s
 									<button type="button" onClick={handleDelete} className="btn btn-light btn-active-light-primary me-2">삭제</button>
 									<button type="button" onClick={handleSubmit} className="btn btn-primary" id="kt_account_profile_details_submit">쿠폰수정</button>
 									<button type="button" onClick={() => {
-										router.push(`../list?${searchParams.toString()}`); //목록
+										router.push(`../list?${queryString}`); //목록
 									}}
 										className="btn btn-light btn-active-light-primary me-2">목록</button>
 								</div>

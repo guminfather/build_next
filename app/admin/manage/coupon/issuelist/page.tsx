@@ -109,11 +109,11 @@ export default function AdminCouponIssuelist() {
 
     //데이타 로딩 함수호출
     useEffect(() => {
-        const queryPage = parseInt(params.get('page') || '1', 10);
-        const queryPageSize = parseInt(params.get('pageSize') || '10', 10);
-        const querySearchText = params.get('searchText') || '';
-        const querySearchType = params.get('searchType') || '';
-        const queryIsState = params.get('isState') || '';
+        const queryPage = parseInt(params?.get('page') || '1', 10);
+        const queryPageSize = parseInt(params?.get('pageSize') || '10', 10);
+        const querySearchText = params?.get('searchText') || '';
+        const querySearchType = params?.get('searchType') || '';
+        const queryIsState = params?.get('isState') || '';
         setSearchText(querySearchText);
         setSearchType(querySearchType);
         setIsState(queryIsState);

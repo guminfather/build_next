@@ -12,7 +12,7 @@ export default function qrCodeUsed() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const queryId = params.get('id') || '';
+            const queryId = params?.get('id') || '';
             console.log("id : ", queryId)
 
             const result = await qrcodeUsed(queryId);

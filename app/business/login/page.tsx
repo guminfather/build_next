@@ -145,7 +145,7 @@ export default function LoginBusiness() {
                                         <div>
                                             <input type="checkbox" id="rememberId" checked={autoLogin} onChange={() => setAutoLogin(!autoLogin)}/> 아이디 저장
                                         </div>
-                                        <a href="html/login/reset-password.html" className="link-primary">비밀번호를 잊으셨나요 ?</a>
+                                        <a href="./pwfind" className="link-primary">비밀번호를 잊으셨나요 ?</a>
                                     </div>
                                     <div className="d-grid mb-10">
                                         <button type="submit" id="kt_sign_in_submit" className="btn btn-primary"

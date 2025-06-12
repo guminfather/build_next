@@ -14,6 +14,8 @@ export default function AdminPartnerDetail({ params }: { params: Promise<{ id: s
     const { id } = use(params);
     const router = useRouter();
     const searchParams = useSearchParams();
+    const queryString = (searchParams as unknown as URLSearchParams).toString();
+
 
     const [partner, setPartner] = useState<PartnerResponse | null>(null);
 
@@ -63,8 +65,8 @@ export default function AdminPartnerDetail({ params }: { params: Promise<{ id: s
                 <p><strong>이메일:</strong> {partner?.email}</p>
             </div>
 
-            <button onClick={() => { router.push(`./list?${searchParams.toString()}`); }}>목록으로 돌아가기</button>
-            <button onClick={() => { router.push(`./edit/${id}?${searchParams.toString()}`); }}>수정</button>
+            <button onClick={() => { router.push(`./list?${queryString}`); }}>목록으로 돌아가기</button>
+            <button onClick={() => { router.push(`./edit/${id}?${queryString}`); }}>수정</button>
             <button onClick={handleDelete} id="del">삭제</button>
         </div>
     );
