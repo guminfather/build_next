@@ -53,6 +53,7 @@ export default function PwFindBusiness() {
                     alert(`입력하신 메일로 임시 비밀번호를 보내드렸습니다.`);
                     router.push("/business/login");
                 } else {
+                    setLoading(true)
                     alert('메일 전송에 실패했습니다.');
                 }  
             } else {
