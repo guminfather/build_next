@@ -421,7 +421,7 @@ export default function AdminCouponAdd() {
 									<button type="button" onClick={handleSubmit} className="btn btn-primary me-2" id="kt_account_profile_details_submit">쿠폰생성</button>
 									<button type="button" className="btn btn-light btn-active-light-primary"
 										onClick={() => {
-											router.push("../list"); //목록
+											router.push("./list"); //목록
 										}}
 									>목록</button>
 								</div>

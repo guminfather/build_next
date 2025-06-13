@@ -368,8 +368,12 @@ export default function AdminPartnerAdd() {
                                 </div>
                             </div>
                             <div className="card-footer d-flex justify-content-end py-6 px-9">
-                                <button type="button" onClick={handleSubmit} className="btn btn-primary" id="register">등록</button>
-                                <button type="reset" className="btn btn-light btn-active-light-primary me-2">목록</button>
+                                <button type="button" onClick={handleSubmit} className="btn btn-primary me-2" id="register">등록</button>
+                                <button type="button" className="btn btn-light btn-active-light-primary me-2"
+                                    onClick={() => {
+									    router.push("./list"); //목록
+									}} 
+                                >목록</button>
                             </div>
                         </form>
                     </div>

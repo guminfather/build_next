@@ -13,6 +13,9 @@ import Pagination from '@/components/Pagination';
 import PartnerTable from '@/components/table/PartnerTable';
 import PartnersExcel from '@/components/excel/PartnersExcel';
 
+import Link from 'next/link';
+
+
 import "../../../../css/datatables.bundle.css";
 import "../../../../css/plugins.bundle.css";
 import "../../../../css/style.bundle.css";
@@ -121,10 +124,47 @@ export default function AdminPartners() {
         });
     }, [params]);
 
-    //사업자 등록 페이지 이동
-    const handlePartnerInput = () => {
-        router.push(`/admin/manage/business/add`);
-    }
+    
+
+
+    const [selectedIds, setSelectedIds] = useState<number[]>([]);
+    const [selectAll, setSelectAll] = useState(false);
+
+    //선택된 아이디들과, 목록이 변경될때 마다 전체선택인지 확인
+    useEffect(() => {
+        // 전체 선택 상태 동기화
+        if (selectedIds.length === partners.length && partners.length > 0) {
+            setSelectAll(true); //전체선택
+        } else {
+            setSelectAll(false); //전체선택 해제
+        }
+    }, [selectedIds, partners]);
+
+    //함수
+    const handleSelectAllChange = () => {
+        if (selectAll) {
+            setSelectedIds([]);
+        } else {
+            setSelectedIds(partners.map((_, i) => i));
+        }
+        setSelectAll(!selectAll);
+    };
+    //함수
+    const handleCheckboxChange = (index: number) => {
+        setSelectedIds(prev =>
+            prev.includes(index)
+                ? prev.filter(id => id !== index)
+                : [...prev, index]
+        );
+    };
+    //함수
+    const handleDelete = () => {
+        if (confirm("정말 탈퇴처리 하겠습니까?")) {
+            const partnerIdsToDelete = selectedIds.map(i => partners[i].partnerId);
+            handleDeletePartners(partnerIdsToDelete);
+            setSelectedIds([]);
+        }
+    };
 
     if (!isLoading) return <div className="p-6">로딩 중...</div>;
 
@@ -143,15 +183,6 @@ export default function AdminPartners() {
                             </li>
                             <li className="breadcrumb-item text-muted">사업자회원관리</li>
                         </ul>
-                    </div>
-                    <div>
-                        {/*------- 사업자 등록 버튼 -------------- */}
-                        <button type="button" onClick={handlePartnerInput} className="btn btn-light-primary">
-                            <i className="ki-duotone ki-exit-up fs-2">
-                                <span className="path1"></span>
-                                <span className="path2"></span>
-                            </i>사업자 등록
-                        </button>
                     </div>
                 </div>
             </div>
@@ -227,10 +258,67 @@ export default function AdminPartners() {
 
                         </div>
                         <div className="card-body pt-0">
-                            {/* 테이블 */}
+                            {/* 테이블 
                             <PartnerTable partners={partners} total={total} currentPage={page} pageSize={pageSize}
-                                searchText={searchText} searchType={searchType} onDelete={handleDeletePartners} />
-
+                                searchText={searchText} searchType={searchType} onDelete={handleDeletePartners} />*/}
+                            <div id="kt_ecommerce_report_views_table_wrapper" className="dataTables_wrapper dt-bootstrap4 no-footer">
+                                        
+                                        <div className="mb-2">
+                                            <span className="ms-3 text-muted">총 {total}명</span>
+                                        </div>
+                                        <div className="table-responsive">
+                                            <table className="table align-middle table-row-dashed fs-6 gy-5" id="kt_ecommerce_report_views_table">
+                                                <thead>
+                                                    <tr className="text-gray-400 fw-bold fs-7 text-uppercase gs-0">
+                                                        <th className="w-10px pe-2">
+                                                            <div className="form-check form-check-sm form-check-custom form-check-solid me-3">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={selectAll}
+                                                                    onChange={handleSelectAllChange}
+                                                                    className="form-check-input"
+                                                                    data-kt-check="true" data-kt-check-target="#kt_ecommerce_report_views_table .form-check-input"
+                                                                />
+                                                            </div>
+                                                        </th>
+                                                        <th className="min-w-300px text-center">상호</th>
+                                                        <th className="min-w-200px text-center">사업자번호</th>
+                                                        <th className="min-w-100px text-center">사업분야</th>
+                                                        <th className="min-w-100px text-center">지역</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody className="fw-semibold text-gray-600">
+                                                    {/*{(currentPage - 1) * pageSize + i + 1} ---- 총 {total}명 */}
+                                                    {partners.map((m, i) => (
+                                                        <tr className="text-center"  key={i}>
+                                                            <td>
+                                                                <div className="form-check form-check-sm form-check-custom form-check-solid">
+                                                                    <input
+                                                                        className="form-check-input"
+                                                                        type="checkbox"
+                                                                        checked={selectedIds.includes(i)}
+                                                                        onChange={() => handleCheckboxChange(i)}
+                                                                    />
+                                                                </div>
+                                                            </td>
+                                                            <td className="text-start">
+                                                                <Link className="text-hover-primary text-gray-600"
+                                                                    href={{
+                                                                        pathname: `./edit/${m.partnerId}`,
+                                                                        query: { searchText, searchType, page, pageSize },
+                                                                    }}
+                                                                >{m.partnerName}
+                                                                </Link>
+                                                            </td>
+                                                            <td>{m.businessRegistrationNo}</td>
+                                                            <td>{m.businessType}</td>
+                                                            <td>{m.address.slice(0, 2)}</td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                             <div className="row">
                                 <div className="col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start">
                                     <div className="dataTables_length">
@@ -253,6 +341,16 @@ export default function AdminPartners() {
                                     }}
                                 />
                             </div>
+                        </div>
+                        <div className="card-footer d-flex justify-content-end py-6 px-9">
+							{/*------- 선택삭제 버튼 ---------- */}
+                            <button type="button" className="btn btn-light btn-active-light-primary me-2"
+                                disabled={selectedIds.length === 0}
+                                onClick={handleDelete}
+                            >선택삭제</button>
+                            {/*------- 사업자등록 버튼 ---------- */}
+                            <button type="button" onClick={()=>{ router.push(`./add`); }}
+                                className="btn btn-primary" id="kt_account_profile_details_submit">사업자등록</button>
                         </div>
                     </div>
                 </div>

@@ -11,8 +11,15 @@ import { fetchAdminCoupons, deleteCoupons } from '@/lib/apis/admin';
 import DateRangePicker from "@/components/DateRangePicker";
 
 import Pagination from '@/components/Pagination';
-import CouponTable from '@/components/table/CouponTable';
+//import CouponTable from '@/components/table/CouponTable';
 import CouponsExcel from '@/components/excel/CouponsExcel';
+
+
+import Link from 'next/link';
+import { formatTwoDateWithDot } from '@/utils/common';
+
+
+
 
 import "../../../../css/datatables.bundle.css";
 import "../../../../css/plugins.bundle.css";
@@ -103,16 +110,16 @@ export default function AdminCoupons() {
 
     //DateRangePicker 컴포넌트
     const handleOnDateLoad = async (rangeDate: String) => {
-        if(rangeDate) {
+        if (rangeDate) {
             console.log("데이타 있어.", rangeDate)
             const [startDate, endDate] = rangeDate.split(" - ");
             setStartDate(startDate.replace(/\./g, "-"))
             setEndDate(endDate.replace(/\./g, "-"))
-        }else{
+        } else {
             console.log("데이타 없어.", rangeDate)
             setStartDate("")
             setEndDate("")
-        } 
+        }
     };
 
     //검색타입 selectbox default value
@@ -153,6 +160,73 @@ export default function AdminCoupons() {
             endDate: queryEndDate
         });
     }, [params]);
+
+
+
+
+
+
+
+
+
+
+
+
+    const [selectedIds, setSelectedIds] = useState<number[]>([]);
+    const [selectAll, setSelectAll] = useState(false);
+
+    //선택된 아이디들과, 목록이 변경될때 마다 전체선택인지 확인
+    useEffect(() => {
+        // 전체 선택 상태 동기화
+        if (selectedIds.length === coupons.length && coupons.length > 0) {
+            setSelectAll(true); //전체선택
+        } else {
+            setSelectAll(false); //전체선택 해제
+        }
+    }, [selectedIds, coupons]);
+
+    //함수
+    const handleSelectAllChange = () => {
+        if (selectAll) {
+            setSelectedIds([]);
+        } else {
+            setSelectedIds(coupons.map((_, i) => i));
+        }
+        setSelectAll(!selectAll);
+    };
+    //함수
+    const handleCheckboxChange = (index: number) => {
+        setSelectedIds(prev =>
+            prev.includes(index)
+                ? prev.filter(id => id !== index)
+                : [...prev, index]
+        );
+    };
+    //함수
+    const handleDelete = () => {
+        if (confirm("정말 삭제 하겠습니까?")) {
+            const couponIdsToDelete = selectedIds.map(i => coupons[i].couponId);
+            handleDeleteCoupons(couponIdsToDelete);
+            setSelectedIds([]);
+        }
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     if (!isLoading) return <div className="p-6">로딩 중...</div>;
 
@@ -296,11 +370,80 @@ export default function AdminCoupons() {
                             </div>
                         </div>
                         <div className="card-body pt-0">
-                            {/* 테이블 */}
+                            {/* 테이블 
                             <CouponTable coupons={coupons} total={total} currentPage={page} pageSize={pageSize}
                                 searchText={searchText} searchType={searchType} isState={isState}
-                                startDate={startDate} endDate={endDate} onDelete={handleDeleteCoupons} />
+                                startDate={startDate} endDate={endDate} onDelete={handleDeleteCoupons} />*/}
+                            <div id="kt_ecommerce_report_views_table_wrapper" className="dataTables_wrapper dt-bootstrap4 no-footer">
 
+                                <div className="mb-2">
+                                    <span className="ms-3 text-muted">총 {total}개</span>
+                                </div>
+
+                                <div className="table-responsive">
+                                    <table className="table align-middle table-row-dashed fs-6 gy-5" id="kt_ecommerce_report_views_table">
+                                        <thead>
+                                            <tr className="text-gray-400 fw-bold fs-7 text-uppercase gs-0">
+                                                <th className="w-10px pe-2">
+                                                    <div className="form-check form-check-sm form-check-custom form-check-solid me-3">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={selectAll}
+                                                            onChange={handleSelectAllChange}
+                                                            className="form-check-input"
+                                                            data-kt-check="true" data-kt-check-target="#kt_ecommerce_report_views_table .form-check-input"
+                                                        />
+                                                    </div>
+                                                </th>
+                                                <th className="min-w-200px text-center">상호</th>
+                                                <th className="min-w-300px text-center">쿠폰명</th>
+                                                <th className="min-w-70px text-center">할인율</th>
+                                                <th className="min-w-200px text-center">기간</th>
+                                                <th className="min-w-80px text-center">다운로드 수</th>
+                                                <th className="min-w-80px text-center">사용 수</th>
+                                                <th className="min-w-100px text-center">상태</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="fw-semibold text-gray-600">
+                                            {coupons.map((m, i) => (
+                                                <tr className="text-center" key={i}>
+                                                    <td>
+                                                        <div className="form-check form-check-sm form-check-custom form-check-solid">
+                                                            <input
+                                                                className="form-check-input"
+                                                                type="checkbox"
+                                                                checked={selectedIds.includes(i)}
+                                                                onChange={() => handleCheckboxChange(i)}
+                                                            />
+                                                            {/*(currentPage - 1) * pageSize + i + 1*/}
+                                                        </div>
+                                                    </td>
+                                                    <td className="text-start">
+                                                        {m.partnerName}
+                                                    </td>
+                                                    <td className="text-start">
+                                                        <Link className="text-hover-primary text-gray-600"
+                                                            href={{
+                                                                pathname: `./edit/${m.couponId}`,
+                                                                query: { searchText, searchType, isState, startDate, endDate, page, pageSize },
+                                                            }}
+                                                        >{m.couponName}</Link>
+                                                    </td>
+                                                    <td>{m.discountRate}%</td>
+                                                    <td>{formatTwoDateWithDot(m.usageStartDate, m.usageEndDate)}</td>
+                                                    <td data-bs-target="license">{m.downloadCnt}</td>
+                                                    <td>{m.usedCnt}</td>
+                                                    <td>
+                                                        {m.isState === "ING" ? <span className="badge fw-bold me-auto px-4 py-3 badge-light-primary ">진행중</span> : ""}
+                                                        {m.isState === "END" ? <span className="badge fw-bold me-auto px-4 py-3 badge-light">기간만료</span> : ""}
+                                                        {m.isState === "WAITING" ? <span className="badge fw-bold me-auto px-4 py-3 badge-light">대기중</span> : ""}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                             <div className="row">
                                 <div className="col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start">
                                     <div className="dataTables_length">
@@ -325,8 +468,15 @@ export default function AdminCoupons() {
                             </div>
                         </div>
                         <div className="card-footer d-flex justify-content-end py-6 px-9">
-							<button type="button" className="btn btn-light btn-active-light-primary me-2">선택삭제</button>
-                            <button type="button" className="btn btn-primary" id="kt_account_profile_details_submit">쿠폰등록</button>
+                            <button type="button" className="btn btn-light btn-active-light-primary me-2"
+                                disabled={selectedIds.length === 0}
+                                onClick={handleDelete}
+                            >선택삭제</button>
+                            <button type="button" onClick={() => {
+                                router.push(`./add`);
+
+                            }}
+                                className="btn btn-primary" id="kt_account_profile_details_submit">쿠폰등록</button>
                         </div>
                     </div>
                 </div>

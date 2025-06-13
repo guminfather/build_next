@@ -437,7 +437,7 @@ export default function BusinessCouponEdit({ params }: { params: Promise<{ id: s
 								</div>
 								<div className="card-footer d-flex justify-content-end py-6 px-9">
 									<button type="button" onClick={handleDelete} className="btn btn-light btn-active-light-primary me-2">삭제</button>
-									<button type="button" onClick={handleSubmit} className="btn btn-primary" id="kt_account_profile_details_submit">쿠폰수정</button>
+									<button type="button" onClick={handleSubmit} className="btn btn-primary me-2" id="kt_account_profile_details_submit">쿠폰수정</button>
 									<button type="button" onClick={() => {
 										router.push(`../list?${queryString}`); //목록
 									}}
