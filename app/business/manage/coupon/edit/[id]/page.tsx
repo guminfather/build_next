@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, use, useRef } from 'react';
 import { getCookieName } from '@/lib/cookies';
 import { CouponResponse, CouponRequest, CouponProduct } from '@/types/coupon';
-import { hasText } from '@/utils/common';
+import { hasText, rangeDate } from '@/utils/common';
 import { dateRegex, discountRegex } from '@/utils/regex';
 import { fetchPartnerCouponDetail, updateCoupon, deleteCoupon } from '@/lib/apis/partner';
 
@@ -199,6 +199,19 @@ export default function BusinessCouponEdit({ params }: { params: Promise<{ id: s
 		}
 	};
 
+	const handleRangeDateClick = (dateType: string, rangeType: string) => {
+
+		//날짜 범위 구하기 
+		const { startDate, endDate } = rangeDate(rangeType)
+
+		if (dateType === 'usage') {
+			setCoupon(prev => ({ ...prev!, usageStartDate: startDate }))
+			setCoupon(prev => ({ ...prev!, usageEndDate: endDate }))
+		} else {
+			setCoupon(prev => ({ ...prev!, issueStartDate: startDate }))
+			setCoupon(prev => ({ ...prev!, issueEndDate: endDate }))
+		}
+	}
 
 	return (
 		<>
@@ -229,12 +242,13 @@ export default function BusinessCouponEdit({ params }: { params: Promise<{ id: s
 						<div id="kt_account_settings_profile_details" className="collapse show">
 							<form id="kt_account_profile_details_form" className="form">
 								<div className="card-body border-top p-9">
+									{/*
 									<div className="row mb-6">
 										<label className="col-lg-4 col-form-label fw-semibold fs-6">상호</label>
 										<div className="col-lg-8 fv-row form-control-lg">
-											{coupon?.partnerId},{coupon?.partnerName}
+											{coupon?.partnerName} ( ID : {coupon?.partnerId} )
 										</div>
-									</div>
+									</div>*/}
 									<div className="row mb-6">
 										<label className="col-lg-4 col-form-label required fw-semibold fs-6">쿠폰명</label>
 										<div className="col-lg-8 fv-row">
@@ -348,23 +362,23 @@ export default function BusinessCouponEdit({ params }: { params: Promise<{ id: s
 											</div>
 											<div className="nav-group nav-group-fluid mt-2">
 												<label>
-													<input type="radio" className="btn-check" name="type" value="has" />
+													<input type="radio" className="btn-check" name="type" value="has"  onClick={() => handleRangeDateClick('usage','7days')}/>
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">07일</span>
 												</label>
 												<label>
-													<input type="radio" className="btn-check" name="type" value="users" />
+													<input type="radio" className="btn-check" name="type" value="users"  onClick={() => handleRangeDateClick('usage','15days')}/>
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">15일</span>
 												</label>
 												<label>
-													<input type="radio" className="btn-check" name="type" value="month" />
+													<input type="radio" className="btn-check" name="type" value="month"  onClick={() => handleRangeDateClick('usage','1month')}/>
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">1개월</span>
 												</label>
 												<label>
-													<input type="radio" className="btn-check" name="type" value="3month" />
+													<input type="radio" className="btn-check" name="type" value="3month"  onClick={() => handleRangeDateClick('usage','3months')}/>
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">3개월</span>
 												</label>
 												<label>
-													<input type="radio" className="btn-check" name="type" value="6month" />
+													<input type="radio" className="btn-check" name="type" value="6month"  onClick={() => handleRangeDateClick('usage','6months')}/>
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">6개월</span>
 												</label>
 											</div>
@@ -387,23 +401,23 @@ export default function BusinessCouponEdit({ params }: { params: Promise<{ id: s
 											</div>
 											<div className="nav-group nav-group-fluid mt-2">
 												<label>
-													<input type="radio" className="btn-check" name="type1" value="has" />
+													<input type="radio" className="btn-check" name="type1" value="has" onClick={() => handleRangeDateClick('issue','7days')}/>
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">07일</span>
 												</label>
 												<label>
-													<input type="radio" className="btn-check" name="type1" value="users" />
+													<input type="radio" className="btn-check" name="type1" value="users" onClick={() => handleRangeDateClick('issue','15days')}/>
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">15일</span>
 												</label>
 												<label>
-													<input type="radio" className="btn-check" name="type1" value="month" />
+													<input type="radio" className="btn-check" name="type1" value="month" onClick={() => handleRangeDateClick('issue','1month')}/>
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">1개월</span>
 												</label>
 												<label>
-													<input type="radio" className="btn-check" name="type1" value="3month" />
+													<input type="radio" className="btn-check" name="type1" value="3month" onClick={() => handleRangeDateClick('issue','3months')}/>
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">3개월</span>
 												</label>
 												<label>
-													<input type="radio" className="btn-check" name="type1" value="6month" />
+													<input type="radio" className="btn-check" name="type1" value="6month" onClick={() => handleRangeDateClick('issue','6months')}/>
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">6개월</span>
 												</label>
 											</div>

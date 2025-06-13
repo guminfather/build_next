@@ -4,8 +4,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Coupon, CouponProduct } from '@/types/coupon';
 import { dateRegex, discountRegex } from '@/utils/regex';
-import { getToday,getNextDay, hasText } from '@/utils/common';
+import { getToday, getNextDay, hasText, rangeDate } from '@/utils/common';
 import { createCoupon } from '@/lib/apis/partner';
+
 
 
 import "../../../../css/fullcalendar.bundle.css";
@@ -23,22 +24,22 @@ export default function BusinessCouponAdd() {
 	const [discountRate, setDiscountRate] = useState(0);
 	const [templateType, setTemplateType] = useState(1);
 	const [usageStartDate, setUsageStartDate] = useState(getToday);
-	const [usageEndDate, setUsageEndDate] = useState(getNextDay(30));
+	const [usageEndDate, setUsageEndDate] = useState(getNextDay(6));
 	const [issueStartDate, setIssueStartDate] = useState(getToday);
-	const [issueEndDate, setIssueEndDate] = useState(getNextDay(30));
+	const [issueEndDate, setIssueEndDate] = useState(getNextDay(6));
 	const [benefitDescription, setBenefitDescription] = useState("");
 	const [isUsable, setIsUsable] = useState("USABLE");
 	const [isIssue, setIsIssue] = useState("N"); //발급여부
 	const [productNames, setProductNames] = useState<string[]>([]);
 	const [couponProducts, setCouponProducts] = useState<CouponProduct[]>([])
 
-	
+
 	//쿠폰상품에 재배열 //console.log("상품 등록 내용 (productNames) :  ", names);
 	const couponProductsUpdate = () => {
 		const names = couponProducts.map(p => p.name.trim()).filter(name => name.length > 0)
 		setProductNames(prev => ({ ...prev!, productNames: names }))
 	}
-	
+
 	//상품 추가 
 	const addProduct = () => {
 		/*
@@ -66,8 +67,8 @@ export default function BusinessCouponAdd() {
 		))
 		couponProductsUpdate()
 	}
-	
-	
+
+
 	//쿠폰등록 버튼 클릭 핸들러 (handleSubmit)
 	const handleSubmit = async () => {
 		try {
@@ -121,7 +122,7 @@ export default function BusinessCouponAdd() {
 				alert('사용기간 시작일은 발급기간 시작일보다 같거나 늦어야 합니다.');
 				return false;
 			}
-			
+
 			//상품 최소 한개 이상 입력
 			const names = couponProducts.map(p => p.name.trim()).filter(name => name.length > 0)
 			/*
@@ -129,7 +130,7 @@ export default function BusinessCouponAdd() {
 				alert("최소 한 개 이상의 상품명을 입력해주세요.")
 				return
 			}*/
-						
+
 			const newCoupon: Coupon = {
 				partnerId: '',
 				couponName: couponName,
@@ -141,11 +142,11 @@ export default function BusinessCouponAdd() {
 				issueEndDate: issueEndDate,
 				benefitDescription: benefitDescription,
 				isUsable: "USABLE",
-				isIssue : "N",
-				issueDate : "",
+				isIssue: "N",
+				issueDate: "",
 				productNames: names,
 			}
-            //console.log(newCoupon)
+			//console.log(newCoupon)
 			//쿠폰등록 API 호출
 			const result = await createCoupon(newCoupon);
 			if (result.success) {
@@ -160,7 +161,24 @@ export default function BusinessCouponAdd() {
 		}
 	};
 
-	return (
+													
+
+
+	const handleRangeDateClick = (dateType:string, rangeType: string) => {
+		
+		//날짜 범위 구하기 
+		const {startDate, endDate} = rangeDate(rangeType)
+
+		if(dateType==='usage') {
+			setUsageStartDate(startDate);
+			setUsageEndDate(endDate);
+		}else{
+			setIssueStartDate(startDate);
+			setIssueEndDate(endDate);
+		}
+	}
+
+		return (
 			<>
 				<div id="kt_app_toolbar" className="app-toolbar py-3 py-lg-6">
 					<div id="kt_app_toolbar_container" className="app-container container-xxl d-flex flex-stack">
@@ -191,8 +209,8 @@ export default function BusinessCouponAdd() {
 										<div className="row mb-6">
 											<label className="col-lg-4 col-form-label required fw-semibold fs-6">쿠폰명</label>
 											<div className="col-lg-8 fv-row">
-												<input type="text" name="couponName" className="form-control form-control-lg form-control-solid" placeholder="" 
-												value={couponName} onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setCouponName(e.target.value) }} />
+												<input type="text" name="couponName" className="form-control form-control-lg form-control-solid" placeholder=""
+													value={couponName} onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setCouponName(e.target.value) }} />
 											</div>
 										</div>
 										<div className="row mb-6">
@@ -200,8 +218,8 @@ export default function BusinessCouponAdd() {
 											<div className="col-lg-8">
 												<div className="row">
 													<div className="col-lg-6 fv-row">
-														<input type="number" name="discountRate" className="form-control form-control-lg form-control-solid mb-3 mb-lg-0" placeholder="숫자만 입력" 
-														value={discountRate} onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setDiscountRate(parseFloat(e.target.value)) }} />
+														<input type="number" name="discountRate" className="form-control form-control-lg form-control-solid mb-3 mb-lg-0" placeholder="숫자만 입력"
+															value={discountRate} onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setDiscountRate(parseFloat(e.target.value)) }} />
 													</div>
 													<span className="col-lg-1 fw-semibold pt-7">%</span>
 												</div>
@@ -220,20 +238,20 @@ export default function BusinessCouponAdd() {
 											</div>
 										</div>
 										{couponProducts.map((product, index) => (
-										<div className="row mb-6" key={product.id}>
-											<label className="col-lg-4 col-form-label fw-semibold fs-6">{/*상품명*/}</label>
-											<div className="col-lg-8">
-												<div className="row">
-													<div className="col-lg-6 fv-row">
-														<input type="text" className="form-control form-control-lg form-control-solid mb-3 mb-lg-0" placeholder="상품명 입력"
-															value={product.name}
-															onChange={(e) => handleProductChange(product.id, e.target.value)}
-														/>
+											<div className="row mb-6" key={product.id}>
+												<label className="col-lg-4 col-form-label fw-semibold fs-6">{/*상품명*/}</label>
+												<div className="col-lg-8">
+													<div className="row">
+														<div className="col-lg-6 fv-row">
+															<input type="text" className="form-control form-control-lg form-control-solid mb-3 mb-lg-0" placeholder="상품명 입력"
+																value={product.name}
+																onChange={(e) => handleProductChange(product.id, e.target.value)}
+															/>
+														</div>
+														<span className="col-lg-1 fw-semibold pt-7" onClick={() => removeProduct(product.id)}>삭제</span>
 													</div>
-													<span className="col-lg-1 fw-semibold pt-7" onClick={() => removeProduct(product.id)}>삭제</span>
 												</div>
 											</div>
-										</div>
 										))}
 										{/*--------------------------------------------------------------------*/}
 
@@ -243,8 +261,8 @@ export default function BusinessCouponAdd() {
 											<div className="col-lg-8">
 												<div className="row">
 													<div className="col-lg-6">
-														<input type="radio" className="btn-check" name="templateType" value="1" checked={templateType === 1} id="kt_create_account_form_account_type_personal" 
-														onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setTemplateType(parseFloat(e.target.value)) }}/>
+														<input type="radio" className="btn-check" name="templateType" value="1" checked={templateType === 1} id="kt_create_account_form_account_type_personal"
+															onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setTemplateType(parseFloat(e.target.value)) }} />
 														<label className="btn btn-outline btn-outline-dashed btn-active-light-primary p-7 d-flex align-items-center" htmlFor="kt_create_account_form_account_type_personal">
 															<i className="ki-duotone ki-badge fs-3x me-5">
 																<span className="path1"></span>
@@ -260,8 +278,8 @@ export default function BusinessCouponAdd() {
 														</label>
 													</div>
 													<div className="col-lg-6">
-														<input type="radio" className="btn-check" name="templateType" value="2" checked={templateType === 2} id="kt_create_account_form_account_type_corporate" 
-														onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setTemplateType(parseFloat(e.target.value)) }}/>
+														<input type="radio" className="btn-check" name="templateType" value="2" checked={templateType === 2} id="kt_create_account_form_account_type_corporate"
+															onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setTemplateType(parseFloat(e.target.value)) }} />
 														<label className="btn btn-outline btn-outline-dashed btn-active-light-primary p-7 d-flex align-items-center" htmlFor="kt_create_account_form_account_type_corporate">
 															<i className="ki-duotone ki-briefcase fs-3x me-5">
 																<span className="path1"></span>
@@ -282,35 +300,36 @@ export default function BusinessCouponAdd() {
 											<div className="col-lg-8">
 												<div className="row">
 													<div className="col-lg-6 fv-row">
-														<input type="date" className="form-control form-control-solid" name="usageStartDate" placeholder="Pick a start date" id="kt_calendar_datepicker_start_date" 
-														onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setUsageStartDate(e.target.value) }}
-														value={usageStartDate} />
+														<input type="date" className="form-control form-control-solid" name="usageStartDate" placeholder="Pick a start date" id="kt_calendar_datepicker_start_date"
+															onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setUsageStartDate(e.target.value) }}
+															value={usageStartDate} />
 													</div>
 													<div className="col-lg-6 fv-row">
-														<input type="date" className="form-control form-control-solid" name="usageEndDate" placeholder="Pick a end date" id="kt_calendar_datepicker_end_date" 
-														onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setUsageEndDate(e.target.value) }}
-														value={usageEndDate} />
+														<input type="date" className="form-control form-control-solid" name="usageEndDate" placeholder="Pick a end date" id="kt_calendar_datepicker_end_date"
+															onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setUsageEndDate(e.target.value) }}
+															value={usageEndDate} />
 													</div>
 												</div>
 												<div className="nav-group nav-group-fluid mt-2">
 													<label>
-														<input type="radio" className="btn-check" name="type" value="has" />
+														<input type="radio" className="btn-check" name="type" value="has" onClick={() => handleRangeDateClick('usage','7days')}/>
 														<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">07일</span>
 													</label>
 													<label>
-														<input type="radio" className="btn-check" name="type" value="users" />
+														<input type="radio" className="btn-check" name="type" value="users"  onClick={() => handleRangeDateClick('usage','15days')}/>
+														
 														<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">15일</span>
 													</label>
 													<label>
-														<input type="radio" className="btn-check" name="type" value="month" />
+														<input type="radio" className="btn-check" name="type" value="month"  onClick={() => handleRangeDateClick('usage','1month')}/>
 														<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">1개월</span>
 													</label>
 													<label>
-														<input type="radio" className="btn-check" name="type" value="3month" />
+														<input type="radio" className="btn-check" name="type" value="3month"  onClick={() => handleRangeDateClick('usage','3months')}/>
 														<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">3개월</span>
 													</label>
 													<label>
-														<input type="radio" className="btn-check" name="type" value="6month" />
+														<input type="radio" className="btn-check" name="type" value="6month"  onClick={() => handleRangeDateClick('usage','6months')}/>
 														<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">6개월</span>
 													</label>
 												</div>
@@ -321,35 +340,35 @@ export default function BusinessCouponAdd() {
 											<div className="col-lg-8">
 												<div className="row">
 													<div className="col-lg-6 fv-row">
-														<input type="date" name="issueStartDate"  className="form-control form-control-solid" placeholder="Pick a start date" id="kt_calendar_datepicker_start_date01" 
-														onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setIssueStartDate(e.target.value) }}
-														value={issueStartDate} />
+														<input type="date" name="issueStartDate" className="form-control form-control-solid" placeholder="Pick a start date" id="kt_calendar_datepicker_start_date01"
+															onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setIssueStartDate(e.target.value) }}
+															value={issueStartDate} />
 													</div>
 													<div className="col-lg-6 fv-row">
-														<input type="date" name="issueEndDate" className="form-control form-control-solid"  placeholder="Pick a end date" id="kt_calendar_datepicker_end_date01" 
-														onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setIssueEndDate(e.target.value) }}
-														value={issueEndDate} />
+														<input type="date" name="issueEndDate" className="form-control form-control-solid" placeholder="Pick a end date" id="kt_calendar_datepicker_end_date01"
+															onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setIssueEndDate(e.target.value) }}
+															value={issueEndDate} />
 													</div>
 												</div>
 												<div className="nav-group nav-group-fluid mt-2">
 													<label>
-														<input type="radio" className="btn-check" name="type1" value="has" />
+														<input type="radio" className="btn-check" name="type1" value="has" onClick={() => handleRangeDateClick('issue','7days')}/>
 														<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">07일</span>
 													</label>
 													<label>
-														<input type="radio" className="btn-check" name="type1" value="users" />
+														<input type="radio" className="btn-check" name="type1" value="users" onClick={() => handleRangeDateClick('issue','15days')}/>
 														<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">15일</span>
 													</label>
 													<label>
-														<input type="radio" className="btn-check" name="type1" value="month" />
+														<input type="radio" className="btn-check" name="type1" value="month" onClick={() => handleRangeDateClick('issue','1month')}/>
 														<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">1개월</span>
 													</label>
 													<label>
-														<input type="radio" className="btn-check" name="type1" value="3month" />
+														<input type="radio" className="btn-check" name="type1" value="3month" onClick={() => handleRangeDateClick('issue','3months')}/>
 														<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">3개월</span>
 													</label>
 													<label>
-														<input type="radio" className="btn-check" name="type1" value="6month" />
+														<input type="radio" className="btn-check" name="type1" value="6month" onClick={() => handleRangeDateClick('issue','6months')}/>
 														<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">6개월</span>
 													</label>
 												</div>
@@ -358,9 +377,9 @@ export default function BusinessCouponAdd() {
 										<div className="row mb-6">
 											<label className="col-lg-4 col-form-label fw-semibold fs-6">혜택내용</label>
 											<div className="col-lg-8 fv-row">
-												<textarea className="form-control form-control-solid" rows={3} 
-												name="benefitDescription" placeholder="내용 입력" value={benefitDescription}
-												onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setBenefitDescription(e.target.value)}></textarea>
+												<textarea className="form-control form-control-solid" rows={3}
+													name="benefitDescription" placeholder="내용 입력" value={benefitDescription}
+													onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setBenefitDescription(e.target.value)}></textarea>
 											</div>
 										</div>
 										<div className="row mb-6">
@@ -368,13 +387,13 @@ export default function BusinessCouponAdd() {
 											<div className="col-lg-8 fv-row">
 												<div className="d-flex align-items-center mt-3">
 													<label className="form-check form-check-custom form-check-inline form-check-solid me-5">
-														<input name="isUsable" type="radio" value="USABLE" checked={isUsable === 'USABLE'} className="form-check-input me-3" id="kt_modal_update_role_option_0" 
-														onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setIsUsable(e.target.value) }} />
+														<input name="isUsable" type="radio" value="USABLE" checked={isUsable === 'USABLE'} className="form-check-input me-3" id="kt_modal_update_role_option_0"
+															onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setIsUsable(e.target.value) }} />
 														<span className="fw-semibold ps-2 fs-6">사용</span>
 													</label>
 													<label className="form-check form-check-custom form-check-inline form-check-solid">
-														<input name="isUsable" type="radio" value="NOT_USABLE" checked={isUsable === 'NOT_USABLE'} className="form-check-input me-3"  id="kt_modal_update_role_option_1" 
-														onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setIsUsable(e.target.value) }} />
+														<input name="isUsable" type="radio" value="NOT_USABLE" checked={isUsable === 'NOT_USABLE'} className="form-check-input me-3" id="kt_modal_update_role_option_1"
+															onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setIsUsable(e.target.value) }} />
 														<span className="fw-semibold ps-2 fs-6">사용불가</span>
 													</label>
 												</div>
@@ -384,10 +403,10 @@ export default function BusinessCouponAdd() {
 									<div className="card-footer d-flex justify-content-end py-6 px-9">
 										<button type="button" onClick={handleSubmit} className="btn btn-primary me-2" id="kt_account_profile_details_submit">쿠폰생성</button>
 										<button type="button" className="btn btn-light btn-active-light-primary"
-											onClick={() => { 
+											onClick={() => {
 												router.push("./list"); //목록
 											}}
-											>목록</button>
+										>목록</button>
 									</div>
 								</form>
 							</div>
@@ -396,8 +415,8 @@ export default function BusinessCouponAdd() {
 				</div>
 			</>
 		);
-		
-}
+
+	}
 
 
 

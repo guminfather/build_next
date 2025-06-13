@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Coupon, CouponProduct } from '@/types/coupon';
 import { Partner } from '@/types/partner';
 import { dateRegex, discountRegex } from '@/utils/regex';
-import { getToday, getNextDay, hasText } from '@/utils/common';
+import { getToday, getNextDay, hasText, rangeDate } from '@/utils/common';
 import { createCoupon, fetchPartnersAll } from '@/lib/apis/admin';
 
 
@@ -25,9 +25,9 @@ export default function AdminCouponAdd() {
 	const [discountRate, setDiscountRate] = useState(0);
 	const [templateType, setTemplateType] = useState(1);
 	const [usageStartDate, setUsageStartDate] = useState(getToday);
-	const [usageEndDate, setUsageEndDate] = useState(getNextDay(30));
+	const [usageEndDate, setUsageEndDate] = useState(getNextDay(6));
 	const [issueStartDate, setIssueStartDate] = useState(getToday);
-	const [issueEndDate, setIssueEndDate] = useState(getNextDay(30));
+	const [issueEndDate, setIssueEndDate] = useState(getNextDay(6));
 	const [benefitDescription, setBenefitDescription] = useState("");
 	const [isUsable, setIsUsable] = useState("USABLE");
 	const [isIssue, setIsIssue] = useState("N"); //발급여부
@@ -181,6 +181,20 @@ export default function AdminCouponAdd() {
 		}
 	};
 
+	const handleRangeDateClick = (dateType: string, rangeType: string) => {
+
+		//날짜 범위 구하기 
+		const { startDate, endDate } = rangeDate(rangeType)
+
+		if (dateType === 'usage') {
+			setUsageStartDate(startDate);
+			setUsageEndDate(endDate);
+		} else {
+			setIssueStartDate(startDate);
+			setIssueEndDate(endDate);
+		}
+	}
+
 	return (
 		<>
 			<div id="kt_app_toolbar" className="app-toolbar py-3 py-lg-6">
@@ -330,23 +344,24 @@ export default function AdminCouponAdd() {
 											</div>
 											<div className="nav-group nav-group-fluid mt-2">
 												<label>
-													<input type="radio" className="btn-check" name="type" value="has" />
+													<input type="radio" className="btn-check" name="type" value="has" onClick={() => handleRangeDateClick('usage', '7days')} />
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">07일</span>
 												</label>
 												<label>
-													<input type="radio" className="btn-check" name="type" value="users" />
+													<input type="radio" className="btn-check" name="type" value="users" onClick={() => handleRangeDateClick('usage', '15days')} />
+
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">15일</span>
 												</label>
 												<label>
-													<input type="radio" className="btn-check" name="type" value="month" />
+													<input type="radio" className="btn-check" name="type" value="month" onClick={() => handleRangeDateClick('usage', '1month')} />
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">1개월</span>
 												</label>
 												<label>
-													<input type="radio" className="btn-check" name="type" value="3month" />
+													<input type="radio" className="btn-check" name="type" value="3month" onClick={() => handleRangeDateClick('usage', '3months')} />
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">3개월</span>
 												</label>
 												<label>
-													<input type="radio" className="btn-check" name="type" value="6month" />
+													<input type="radio" className="btn-check" name="type" value="6month" onClick={() => handleRangeDateClick('usage', '6months')} />
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">6개월</span>
 												</label>
 											</div>
@@ -369,23 +384,23 @@ export default function AdminCouponAdd() {
 											</div>
 											<div className="nav-group nav-group-fluid mt-2">
 												<label>
-													<input type="radio" className="btn-check" name="type1" value="has" />
+													<input type="radio" className="btn-check" name="type1" value="has" onClick={() => handleRangeDateClick('issue', '7days')} />
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">07일</span>
 												</label>
 												<label>
-													<input type="radio" className="btn-check" name="type1" value="users" />
+													<input type="radio" className="btn-check" name="type1" value="users" onClick={() => handleRangeDateClick('issue', '15days')} />
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">15일</span>
 												</label>
 												<label>
-													<input type="radio" className="btn-check" name="type1" value="month" />
+													<input type="radio" className="btn-check" name="type1" value="month" onClick={() => handleRangeDateClick('issue', '1month')} />
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">1개월</span>
 												</label>
 												<label>
-													<input type="radio" className="btn-check" name="type1" value="3month" />
+													<input type="radio" className="btn-check" name="type1" value="3month" onClick={() => handleRangeDateClick('issue', '3months')} />
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">3개월</span>
 												</label>
 												<label>
-													<input type="radio" className="btn-check" name="type1" value="6month" />
+													<input type="radio" className="btn-check" name="type1" value="6month" onClick={() => handleRangeDateClick('issue', '6months')} />
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">6개월</span>
 												</label>
 											</div>

@@ -4,7 +4,7 @@ import { useEffect, useState, use, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Partner } from '@/types/partner';
 import { CouponResponse, CouponRequest, CouponProduct } from '@/types/coupon';
-import { hasText } from '@/utils/common';
+import { hasText, rangeDate } from '@/utils/common';
 import { dateRegex, discountRegex } from '@/utils/regex';
 import { fetchAdminCouponDetail, updateCoupon, fetchPartnersAll, deleteCoupon } from '@/lib/apis/admin';
 
@@ -211,6 +211,20 @@ export default function AdminCouponEdit({ params }: { params: Promise<{ id: stri
 		}
 	};
 
+	const handleRangeDateClick = (dateType: string, rangeType: string) => {
+
+		//날짜 범위 구하기 
+		const { startDate, endDate } = rangeDate(rangeType)
+
+		if (dateType === 'usage') {
+			setCoupon(prev => ({ ...prev!, usageStartDate: startDate }))
+			setCoupon(prev => ({ ...prev!, usageEndDate: endDate }))
+		} else {
+			setCoupon(prev => ({ ...prev!, issueStartDate: startDate }))
+			setCoupon(prev => ({ ...prev!, issueEndDate: endDate }))
+		}
+	}
+
 	return (
 		<>
 			<div id="kt_app_toolbar" className="app-toolbar py-3 py-lg-6">
@@ -251,7 +265,7 @@ export default function AdminCouponEdit({ params }: { params: Promise<{ id: stri
 											>
 												<option value="">선택</option>
 												{partners.map((m, i) => (
-													<option value={m.partnerId} key={i}>{m.partnerId}/{m.partnerName}</option>
+													<option value={m.partnerId} key={i}>{m.partnerName} ( ID:{m.partnerId} )</option>
 												))}
 											</select>
 										</div>
@@ -368,23 +382,23 @@ export default function AdminCouponEdit({ params }: { params: Promise<{ id: stri
 											</div>
 											<div className="nav-group nav-group-fluid mt-2">
 												<label>
-													<input type="radio" className="btn-check" name="type" value="has" />
+													<input type="radio" className="btn-check" name="type" value="has"  onClick={() => handleRangeDateClick('usage','7days')}/>
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">07일</span>
 												</label>
 												<label>
-													<input type="radio" className="btn-check" name="type" value="users" />
+													<input type="radio" className="btn-check" name="type" value="users"  onClick={() => handleRangeDateClick('usage','15days')}/>
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">15일</span>
 												</label>
 												<label>
-													<input type="radio" className="btn-check" name="type" value="month" />
+													<input type="radio" className="btn-check" name="type" value="month"  onClick={() => handleRangeDateClick('usage','1month')}/>
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">1개월</span>
 												</label>
 												<label>
-													<input type="radio" className="btn-check" name="type" value="3month" />
+													<input type="radio" className="btn-check" name="type" value="3month"  onClick={() => handleRangeDateClick('usage','3months')}/>
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">3개월</span>
 												</label>
 												<label>
-													<input type="radio" className="btn-check" name="type" value="6month" />
+													<input type="radio" className="btn-check" name="type" value="6month"  onClick={() => handleRangeDateClick('usage','6months')}/>
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">6개월</span>
 												</label>
 											</div>
@@ -407,23 +421,23 @@ export default function AdminCouponEdit({ params }: { params: Promise<{ id: stri
 											</div>
 											<div className="nav-group nav-group-fluid mt-2">
 												<label>
-													<input type="radio" className="btn-check" name="type1" value="has" />
+													<input type="radio" className="btn-check" name="type1" value="has" onClick={() => handleRangeDateClick('issue','7days')}/>
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">07일</span>
 												</label>
 												<label>
-													<input type="radio" className="btn-check" name="type1" value="users" />
+													<input type="radio" className="btn-check" name="type1" value="users" onClick={() => handleRangeDateClick('issue','15days')}/>
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">15일</span>
 												</label>
 												<label>
-													<input type="radio" className="btn-check" name="type1" value="month" />
+													<input type="radio" className="btn-check" name="type1" value="month" onClick={() => handleRangeDateClick('issue','1month')}/>
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">1개월</span>
 												</label>
 												<label>
-													<input type="radio" className="btn-check" name="type1" value="3month" />
+													<input type="radio" className="btn-check" name="type1" value="3month" onClick={() => handleRangeDateClick('issue','3months')}/>
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">3개월</span>
 												</label>
 												<label>
-													<input type="radio" className="btn-check" name="type1" value="6month" />
+													<input type="radio" className="btn-check" name="type1" value="6month" onClick={() => handleRangeDateClick('issue','6months')}/>
 													<span className="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4">6개월</span>
 												</label>
 											</div>
