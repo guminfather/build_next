@@ -40316,6 +40316,15 @@ h6 {
     border-bottom: 1px solid var(--bs-card-border-color)
 }
 
+.card .card-header .absolute {
+    position: absolute;
+    width: 200px;
+    padding: 1rem;
+    border-radius: .475rem;
+    z-index: 100;
+    border: 1px solid #eee
+}
+
 .card .card-header .card-title {
     display: flex;
     align-items: center;
