@@ -6,7 +6,7 @@ import axiosInstance from '@/lib/apis/axiosInstance';
 
 const API_BIZNO_URL = 'https://bizno.net'; // 사업자번호 API 주소
 //const API_BASE_URL = 'http://localhost:8080'; // API 서버 주소 (local)
-const API_BASE_URL = 'http://1.234.38.137:8080'; // API 서버 주소 (실서버)
+const API_BASE_URL = 'http://1.234.38.137:8080'; // API 서버 주소 (실 서 버)
 
 // 사업자 아이디 존재 여부 확인
 export const fetchBusinessIdCheck = async (id: string) => {
