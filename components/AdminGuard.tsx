@@ -60,7 +60,7 @@ export default function AdminGuard({ children }: Props) {
 
     // 로딩 중일 땐 아무것도 렌더링하지 않음
     if (authorized === null) {
-        return <>인증 확인 중...</>;
+        return <>{/*인증 확인 중...*/}</>;
     }
 
     // 인증 완료 시 children 렌더링
