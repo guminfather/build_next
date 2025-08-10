@@ -3,16 +3,17 @@
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 import { businessEmailFindPwdUpdate } from '@/lib/apis/common';
+import { emailRegex } from '@/utils/regex';
 
 export default function PwFindBusiness() {
 
     let router = useRouter()
 
     var [email, setEmail] = useState("");
-    var [errerTxt, setErrerTxt] = useState(false);
+    var [errerCheck, setErrerCheck] = useState(false);
     const [loading, setLoading] = useState(false);
-    
-    
+
+
     //비밀번호 찾기 버튼 클릭 핸들러 (handleLogin)
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -23,16 +24,20 @@ export default function PwFindBusiness() {
                 setLoading(false)
                 return;
             }
-           
+            if (!emailRegex.test(email)) { //이메일 검증	@ 포함, 일반 이메일 형식
+                alert('이메일 형식이 올바르지 않습니다.\n(@ 포함, 일반 이메일 형식)');
+                setLoading(false)
+                return;
+            }
 
             //이메일 검색후 임시비밀번호 설정 API
             const result = await businessEmailFindPwdUpdate(email);
             if (result.success) {
                 const name = result.value?.name
                 const pw = result.value?.pw
-                
-                console.log("result" , result.value)
-                
+
+                console.log("result", result.value)
+
                 //메일세팅
                 const emailData = {
                     name: `${name} 고객님`,
@@ -56,11 +61,10 @@ export default function PwFindBusiness() {
                 } else {
                     setLoading(false)
                     alert('메일 전송에 실패했습니다.');
-                }  
+                }
             } else {
-                //alert(result.message);
+                alert('가입된 이메일이 아닙니다. ');
                 setLoading(false)
-                setErrerTxt(true)
                 return;
             }
         } catch (err) {
@@ -100,17 +104,21 @@ export default function PwFindBusiness() {
                                     </div>
                                     <div className="fv-row mb-8">
                                         <input type="text" placeholder="Email" name="email" className="form-control bg-transparent"
-                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setEmail(e.target.value) }} />
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setEmail(e.target.value) }} />
                                     </div>
                                     <div className="d-flex flex-wrap justify-content-center pb-lg-0">
                                         <button type="submit" id="kt_password_reset_submit" className="btn btn-primary me-4"
-                                        data-kt-indicator={loading?"on" : "off"}>
+                                            data-kt-indicator={loading ? "on" : "off"}>
                                             <span className="indicator-label">확인</span>
                                             <span className="indicator-progress">Please wait...
                                                 <span className="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                                         </button>
-                                        <a href="html/login/sign-in.html" className="btn btn-light">취소</a>
+                                        <a href="/business/login" className="btn btn-light">취소</a>
                                     </div>
+                                    {   errerCheck ?
+                                        <span className="text-primary"> 가입된 이메일이 아닙니다. </span> : ''
+                                    }
+                                            
                                 </form>
                             </div>
                         </div>

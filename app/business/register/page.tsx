@@ -8,7 +8,7 @@ import { Partner } from '@/types/partner';
 import { useSignUpStore } from '@/stores/useSignUpStore';
 import { OptionType, SelectBusinessTypeOptions } from '@/types/select';
 import { register, fetchBusinessIdCheck, fetchBusinessCheck } from '@/lib/apis/common';
-import { usernameRegex, emailRegex, passwordRegex, phoneRegex } from '@/utils/regex';
+import { usernameRegex, emailRegex, passwordRegex, phoneRegex, businessRegex } from '@/utils/regex';
 //import { saveTokens } from '@/lib/businessAuth';
 //import { setCookieName } from '@/lib/cookies';
 
@@ -41,17 +41,9 @@ export default function BusinessAdd() {
 
     //*** 2. 사업자등록번호 체크 
     const [businessNumber, setBusinessNumber] = useState(""); //사업자등록번호
-    const [businessCheck, setBusinessCheck] = useState(false); //사업자번호 정상인지, 비정상인지
-    const [bizButtonCheck, setBizButtonCheck] = useState(false); //사업자번호 조회 버튼을 클릭했는지
+    const [businessCheck, setBusinessCheck] = useState(false); //사업자번호 사용가능 여부
+    const [bizButtonCheck, setBizButtonCheck] = useState(false); //사업자번호 유효버튼 클릭여부
     const [bizCheckResult, setBizCheckResult] = useState<string | null>(null); //조회후 결과 메세지
-
-    //*** 2. 사업자번호 확인 핸들들러(API)
-    const handleBisunissCheck = async () => {
-        const total = await fetchBusinessCheck(businessNumber);
-        setBusinessCheck(total > 0 ? true : false);
-        setBizButtonCheck(true);
-        setBizCheckResult(total > 0 ? '유효한 사업자입니다' : '유효하지 않습니다. 다시 입력후 조회해 주세요.');
-    };
 
     //*** 2. 회원가입양식
     const [isFormatValid, setIsFormatValid] = useState<boolean | null>(null);
@@ -70,7 +62,31 @@ export default function BusinessAdd() {
     var [region, setRegion] = useState("");
     var [businessType, setBusinessType] = useState("");
 
-    
+
+    //*** 2. 사업자번호 확인 핸들들러(API)
+    const handleBisunissCheck = async () => {
+        setBizButtonCheck(true); //사업자번호 유효버튼 클릭함
+
+        const total = await fetchBusinessCheck(businessNumber);
+        if (total > 0) {
+            setBusinessCheck(true);  //사업자번호 사용가능
+            setBizCheckResult('유효한 사업자입니다'); //유효버튼 조회후 결과 메세지
+        } else {
+            setBusinessCheck(false); //사업자번호 사용불능
+            setBizCheckResult('유효하지 않습니다. 다시 입력후 조회해 주세요.'); //유효버튼 조회후 결과 메세지
+        }
+    };
+
+    //*** 2. 사업자번호 change시 
+    const handleBusinessChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value; //사업자번호
+        setBusinessNumber(e.target.value.replace(/\D/g, ''))
+        setBusinessCheck(false); // 사업자번호 사용가능여부 초기화
+        setBizButtonCheck(false); // 사업자번호 조회버튼 클릭 여부
+    };
+
+
+
     //1. 동의 체크박스 핸들러
     const handleAgreeCheckboxChange = (key: keyof typeof agreements) => {
         const newAgreements = {
@@ -124,6 +140,18 @@ export default function BusinessAdd() {
         try {
             if (!businessName.trim()) {
                 alert('상호명을 입력해주세요.');
+                return;
+            }
+            if (!businessRegex.test(businessNumber)) {
+                alert('사업자번호 10자리를 입력해주세요.');
+                return;
+            }
+            if (!bizButtonCheck) {
+                alert('사업자번호롤 조회해주세요.');
+                return;
+            }
+            if (!businessCheck && bizButtonCheck) {
+                alert('사업자번호가 유효하지 않습니다. 다시입력후 조회해주세요.');
                 return;
             }
             if (!isFormatValid) {
@@ -214,7 +242,7 @@ export default function BusinessAdd() {
         script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
         script.async = true;
         document.body.appendChild(script);
-        
+
     }, []);
 
     useEffect(() => {
@@ -395,42 +423,37 @@ export default function BusinessAdd() {
                                                 <div className="d-flex">
                                                     <input className="form-control form-control-lg form-control-solid me-3"
                                                         name="businessNumber" placeholder="숫자만 10자리 입력" value={businessNumber}
-                                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                                            const input = e.target.value.replace(/\D/g, ''); // 숫자 외 문자 제거
-                                                            setBusinessNumber(input);
-                                                            setBusinessCheck(false);
-                                                            setBizButtonCheck(false);
-                                                        }}
+                                                        onChange={handleBusinessChange}
                                                     />
                                                     <button onClick={handleBisunissCheck} type="button" className="btn btn-outline text-nowrap">조회하기</button>
                                                 </div>
                                             </div>
                                             <div className="fv-row mb-10">
                                                 <label className="form-label required">아이디</label>
-                                                
-                                                    {isFormatValid === false && (
-                                                        <span className="text-primary">
+
+                                                {isFormatValid === false && (
+                                                    <span className="text-primary">
                                                         - 아이디는 영문으로 시작하고, 영문+숫자 조합 4~12자여야 합니다.
-                                                        </span>
-                                                    )}
-                                                    {checkClicked && isAvailable === true && (
-                                                        <span className="text-primary">
+                                                    </span>
+                                                )}
+                                                {checkClicked && isAvailable === true && (
+                                                    <span className="text-primary">
                                                         - 사용 가능한 아이디입니다.
-                                                        </span>
-                                                    )}
-                                                    {checkClicked && isAvailable === false && (
-                                                        <span className="text-primary">
+                                                    </span>
+                                                )}
+                                                {checkClicked && isAvailable === false && (
+                                                    <span className="text-primary">
                                                         - 이미 사용 중인 아이디입니다.
-                                                        </span>
-                                                    )}            
+                                                    </span>
+                                                )}
 
 
-                                                
+
                                                 <div className="d-flex">
                                                     <input className="form-control form-control-solid me-3" placeholder="영문, 숫자만 입력 6~15자리 입력"
                                                         name="userId" onChange={handleChange} value={userId} />
                                                     <button type="button" onClick={checkDuplicate} className="btn btn-outline text-nowrap">중복확인</button>
-                                                    
+
                                                 </div>
                                             </div>
                                             <div className="fv-row mb-10">
@@ -472,7 +495,7 @@ export default function BusinessAdd() {
                                                     options={SelectBusinessTypeOptions}
                                                     placeholder="선택"
                                                     isSearchable={false}
-                                                    onChange={(selected: SingleValue<OptionType>)=>{
+                                                    onChange={(selected: SingleValue<OptionType>) => {
                                                         //console.log(selected?.value); // 선택된 값
                                                         const value = selected?.value?.toString() || '';
                                                         setBusinessType(value);
@@ -516,18 +539,18 @@ export default function BusinessAdd() {
                                             <div className="fv-row mb-10">
                                                 <label className="form-label required">주소</label>
                                                 <div className="d-flex mb-3">
-                                                    <input type="text" name="zipcode" title="우편번호" id="zipcode" value={zipcode}  
-                                                        className="form-control form-control-solid me-3" 
+                                                    <input type="text" name="zipcode" title="우편번호" id="zipcode" value={zipcode}
+                                                        className="form-control form-control-solid me-3"
                                                         onChange={(e) => { setZipcode(e.target.value) }} readOnly
                                                     />
                                                     <button type="button" onClick={openPostcode} className="btn btn-outline text-nowrap">우편번호 검색</button>
                                                 </div>
                                                 <input type="text" name="addr1" id="addr1" value={addr1}
-                                                    className="form-control form-control-solid me-3 mb-3" placeholder="" 
+                                                    className="form-control form-control-solid me-3 mb-3" placeholder=""
                                                     onChange={(e) => { setAddr1(e.target.value) }} readOnly
                                                 />
-                                                <input type="text" name="addr2" id="addr2" value={addr2} 
-                                                    className="form-control form-control-solid me-3" placeholder="상세주소를 입력해주세요." 
+                                                <input type="text" name="addr2" id="addr2" value={addr2}
+                                                    className="form-control form-control-solid me-3" placeholder="상세주소를 입력해주세요."
                                                     onChange={(e) => { setAddr2(e.target.value) }}
                                                     ref={addr2Ref}
                                                 />
@@ -602,7 +625,7 @@ export default function BusinessAdd() {
                                                     </button>
                                                 </div>
                                                 <div>
-                                                    <button type="button" className="btn btn-primary" 
+                                                    <button type="button" className="btn btn-primary"
                                                         onClick={handleSubmit} id="register" data-kt-indicator="off">
                                                         <span className="indicator-label">다음으로</span>
                                                         <span className="indicator-progress">Please wait...

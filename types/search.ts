@@ -3,6 +3,7 @@ export interface Search {
     pageSize: number;
     searchText: string;
     searchType: string;
+    sortType:string;
 }
 
 export interface SearchCoupon extends Search {

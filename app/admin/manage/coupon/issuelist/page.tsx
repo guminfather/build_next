@@ -30,6 +30,7 @@ export default function AdminCouponIssuelist() {
     const [pageSize, setPageSize] = useState(10); //한페이지에 뿌려질 데이타
     const [searchText, setSearchText] = useState('');
     const [searchType, setSearchType] = useState('');
+    const [sortType, setSortType] = useState('');
     const [isState, setIsState] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
@@ -116,6 +117,7 @@ export default function AdminCouponIssuelist() {
         const queryPageSize = parseInt(params?.get('pageSize') || '10', 10);
         const querySearchText = params?.get('searchText') || '';
         const querySearchType = params?.get('searchType') || '';
+        const querySortType = params?.get('sortType') || '';
         const queryIsState = params?.get('isState') || '';
         setSearchText(querySearchText);
         setSearchType(querySearchType);
@@ -129,6 +131,7 @@ export default function AdminCouponIssuelist() {
             pageSize: queryPageSize,
             searchText: querySearchText,
             searchType: querySearchType,
+            sortType: querySortType,
             isState: queryIsState,
         });
     }, [params]);
@@ -319,8 +322,6 @@ export default function AdminCouponIssuelist() {
                                                         {m.isState==="Y" ? <span className="badge fw-bold me-auto px-4 py-3 badge-light-primary ">사용</span> : ""}
                                                         {m.isState==="N" ? <span className="badge fw-bold me-auto px-4 py-3 badge-light-primary ">미사용</span> : ""}
                                                         {m.isState==="E" ? <span className="badge fw-bold me-auto px-4 py-3 badge-light  ">기간만료 </span> : ""}
-                                                        
-                                                        
                                                     </td>
                                                 </tr>
                                                 ))}

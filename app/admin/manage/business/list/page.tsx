@@ -6,11 +6,11 @@ import Select, { SingleValue } from 'react-select';
 
 import { Partner } from '@/types/partner';
 import { SearchPartner } from '@/types/search';
-import { OptionType, SelectPartnerSearchOptions } from '@/types/select';
-import { fetchPartners, deletePartners } from '@/lib/apis/admin';
+import { OptionType, SelectPartnerSearchOptions, SelectSortOptions } from '@/types/select';
+import { fetchPartners, deletePartners, checkDeletePartners } from '@/lib/apis/admin';
 
 import Pagination from '@/components/Pagination';
-import PartnerTable from '@/components/table/PartnerTable';
+//import PartnerTable from '@/components/table/PartnerTable';
 import PartnersExcel from '@/components/excel/PartnersExcel';
 
 import Link from 'next/link';
@@ -30,6 +30,7 @@ export default function AdminPartners() {
     const [pageSize, setPageSize] = useState(10); //한페이지에 뿌려질 데이타
     const [searchText, setSearchText] = useState('');
     const [searchType, setSearchType] = useState('');
+    const [sortType, setSortType] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     //한페이지에 보여질 데이타수 변경시(검색)
@@ -37,27 +38,43 @@ export default function AdminPartners() {
         const query = new URLSearchParams({
             searchText: searchText || '',
             searchType: searchType || 'all',
+            sortType: sortType || 'all',
             page: String(1) || '1',
             pageSize: String(event.target.value) || '10',
         }).toString();
         window.location.href = `/admin/manage/business/list?${query}`;
     };
 
+    
+
     //페이지 변경시(검색)
     const handlePageChange = (newPage: number = page) => {
         const query = new URLSearchParams({
             searchText: searchText || '',
             searchType: searchType || 'all',
+            sortType: sortType || 'all',
             page: String(newPage) || '1',
             pageSize: String(pageSize) || '10',
         }).toString();
         window.location.href = `/admin/manage/business/list?${query}`;
     };
 
-    //검색버튼 클릭시 (재검색)
+    //검색버튼 클릭시(검색)
     const handleSearchSubmit = () => {
         handlePageChange(1);
     }
+
+    //정렬 변경시(검색)
+    const handleSortTypeChange = (selected: SingleValue<OptionType>) => {
+        const query = new URLSearchParams({
+            searchText: searchText || '',
+            searchType: searchType || 'all',
+            sortType: String(selected?.value) || 'all',
+            page: String(1) || '1',
+            pageSize: String(pageSize) || '10',
+        }).toString();
+        window.location.href = `/admin/manage/business/list?${query}`;
+    };
 
     //검색범위 셀렉트 박스 선택시
     const handleChange = (selected: SingleValue<OptionType>) => {
@@ -65,7 +82,7 @@ export default function AdminPartners() {
     };
 
 
-    // 데이터 조회 함수
+    // 데이터 조회 함수 (api 호출)
     const fetchData = async (search: SearchPartner) => {
         setIsLoading(false);
         const result = await fetchPartners(search); //api 호출
@@ -82,19 +99,30 @@ export default function AdminPartners() {
 
 
 
-    //ParterTable 컴포넌트에서 delete 호출하면 실행(API연동및 재배열)
+    //사업자들 삭제 API 호출 
     const handleDeletePartners = async (ids: string[]) => {
-        const result = await deletePartners(ids); //api 호출
-        if (result.success) {
-            // 삭제 API 호출 또는 로컬 데이터 필터링
-            //const filtered = partners.filter(partner => !ids.includes(partner.partnerId));
-            //setPartners(filtered); // 상태 업데이트로 화면에서 제거됨
-            //console.log("삭제된 파트너 ID:", ids);
-            alert("사업자 " + ids + "들을 탈퇴처리 하였습니다. 한달후 자동 삭제 됩니다.");
-            handleSearchSubmit(); //다시 검색
+        
+        //사업자들 삭제 가능여부 확인
+        const res = await checkDeletePartners(ids); //api 호출
+        //console.log("결과 : " , res.success);
+        
+        //탈퇴 가능
+        if(res.success) {
+            const result = await deletePartners(ids); //api 호출
+            if (result.success) {
+                // 삭제 API 호출 또는 로컬 데이터 필터링
+                //const filtered = partners.filter(partner => !ids.includes(partner.partnerId));
+                //setPartners(filtered); // 상태 업데이트로 화면에서 제거됨
+                //console.log("삭제된 파트너 ID:", ids);
+                alert("사업자들을 탈퇴처리 하였습니다. 한달후 자동 삭제 됩니다.");
+                handleSearchSubmit(); //다시 검색
+            } else {
+                console.log(result.message);
+                return;
+            }
+        //탈퇴 불능(사용하고 있는 쿠폰이 존재)
         } else {
-            console.log(result.message);
-            return;
+            alert(`선택된 사업자중에 사용중인 쿠폰이 있어서 탈퇴 할수 없습니다.`);
         }
     };
 
@@ -103,15 +131,22 @@ export default function AdminPartners() {
         return SelectPartnerSearchOptions.find(option => option.value === searchType);
     }, [searchType]);
 
+    //정렬 selectbox default value
+    const selectedSortType = useMemo(() => {
+        return SelectSortOptions.find(option => option.value === sortType);
+    }, [sortType]);
 
-    //데이타 로딩 함수호출
+
+    //데이타 로딩 함수호출 (검색데이타 불러오기)
     useEffect(() => {
         const queryPage = parseInt(params?.get('page') || '1', 10);
         const queryPageSize = parseInt(params?.get('pageSize') || '10', 10);
         const querySearchText = params?.get('searchText') || '';
-        const querySearchType = params?.get('searchType') || '';
+        const querySearchType = params?.get('searchType') || 'all';
+        const querySortType = params?.get('sortType') || 'all';
         setSearchText(querySearchText);
         setSearchType(querySearchType);
+        setSortType(querySortType);
         setPage(queryPage);
         setPageSize(queryPageSize);
 
@@ -121,6 +156,7 @@ export default function AdminPartners() {
             pageSize: queryPageSize,
             searchText: querySearchText,
             searchType: querySearchType,
+            sortType: querySortType,
         });
     }, [params]);
 
@@ -248,10 +284,56 @@ export default function AdminPartners() {
                                 </div>
 
                             </div>
-                            <div className="card-title">
+                            <div className="card-header  align-items-center justify-content gap-5">
+                                <div className="w-150px">
+                                    <Select<OptionType>
+                                        options={SelectSortOptions}
+                                        placeholder="정렬"
+                                        value={selectedSortType}
+                                        isSearchable={false}
+                                        onChange={handleSortTypeChange}
+                                        theme={(theme) => ({
+                                            ...theme,
+                                            borderRadius: 5,
+                                            colors: {
+                                                ...theme.colors,
+                                                primary25: '#e9ecef',
+                                                primary: '#ECECEE',
+                                                neutral0: '#fff', //option 기본색(흰색)
+                                                neutral80: '#929191', //선택된 글자색
+                                            },
+                                        })}
+                                        styles={{
+                                            control: (base) => ({
+                                                ...base,
+                                                backgroundColor: '#F9F9F9',
+                                                borderColor: '#fff',
+                                                minHeight: '40px',
+                                                fontSize: '13px',
+                                            }),
+                                            option: (base, state) => ({
+                                                ...base,
+                                                backgroundColor: state.isSelected
+                                                    ? '#F7F7F6' //선택시 배경색
+                                                    : state.isFocused
+                                                        ? '#F7F7F6' //마우스오버시 배경색
+                                                        : 'transparent',
+                                                color: state.isSelected
+                                                    ? '#3E97FF' // 선택시 글자색
+                                                    : state.isFocused
+                                                        ? '#3E97FF' // hover 시 파란색 글자
+                                                        : '#808080', // 기본 글자색
+                                                fontWeight: 'normal',
+                                            }),
+                                        }}
+                                    />
+                                </div>
+
+
+
                                 <div className="d-flex align-items-center position-relative my-1">
                                     {/*--- 엑셀 다운로드---- */}
-                                    <PartnersExcel searchText={searchText} searchType={searchType} />
+                                    <PartnersExcel searchText={searchText} searchType={searchType} sortType={sortType}/>
                                 </div>
                                 <div id="kt_ecommerce_report_views_export" className="d-none"></div>
                             </div>
@@ -266,6 +348,7 @@ export default function AdminPartners() {
                                         <div className="mb-2">
                                             <span className="ms-3 text-muted">총 {total}명</span>
                                         </div>
+                                        
                                         <div className="table-responsive">
                                             <table className="table align-middle table-row-dashed fs-6 gy-5" id="kt_ecommerce_report_views_table">
                                                 <thead>

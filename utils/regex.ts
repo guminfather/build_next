@@ -8,6 +8,9 @@ export const usernameRegex = /^(?=[A-Za-z0-9]{4,12}$)(?=[A-Za-z]*\d)(?=\d*[A-Za-
 
 export const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+//숫자 10자리만 허용
+export const businessRegex = /^\d{10}$/;
+
 //8~12자의 영문, 숫자, 특수문자 중 2가지 이상으로만 가능합니다.
 export const passwordRegex = /^(?!.*[^A-Za-z0-9!@#$%^&*])(?=.{8,12}$)(?:(?=.*[A-Za-z])(?=.*\d)|(?=.*[A-Za-z])(?=.*[!@#$%^&*])|(?=.*\d)(?=.*[!@#$%^&*])).*$/;
 

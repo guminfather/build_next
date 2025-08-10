@@ -73,8 +73,10 @@ export const adminLogin = async (userId: string, userPw: string) => {
 
 // 사업자번호 조회 (외부 API - bizno.net)
 export const fetchBusinessCheck = async (businessNumber: string) => {
+    
     const url = `${API_BIZNO_URL}/api/fapi?key=a2VqZ29nb2dvQG5hdmVyLmNvbSAg&gb=1&q=${businessNumber}&type=xml`;
     const res = await axios.get(url);
+console.log(url);
 
     const jsonResult = await parseStringPromise(res.data, {
         explicitArray: false,

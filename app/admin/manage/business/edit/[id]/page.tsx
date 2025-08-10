@@ -3,11 +3,11 @@
 import Select, { SingleValue } from 'react-select';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, use, useRef } from 'react';
-import { fetchAdminPartnerDetail, updatePartner, deletePartner } from '@/lib/apis/admin';
+import { fetchAdminPartnerDetail, updatePartner, deletePartner, checkDeletePartner } from '@/lib/apis/admin';
 import { PartnerResponse, PartnerRequest } from '@/types/partner';
 import { OptionType, SelectBusinessTypeOptions } from '@/types/select';
 import { fetchBusinessCheck } from '@/lib/apis/common';
-import { usernameRegex, emailRegex, passwordRegex, phoneRegex } from '@/utils/regex';
+import { usernameRegex, emailRegex, passwordRegex, phoneRegex, businessRegex } from '@/utils/regex';
 
 
 export default function AdminPartnerEdit({ params }: { params: Promise<{ id: string }> }) {
@@ -24,18 +24,33 @@ export default function AdminPartnerEdit({ params }: { params: Promise<{ id: str
 	const [pwRe, setPwRe] = useState("");
 
 	//*** 2. 사업자등록번호 체크 
-	const [businessCheck, setBusinessCheck] = useState(false); //사업자번호 정상인지, 비정상인지
-	const [bizButtonCheck, setBizButtonCheck] = useState(false); //사업자번호 조회 버튼을 클릭했는지
+	const [businessCheck, setBusinessCheck] = useState(true); //사업자번호 사용가능 여부
+	const [bizButtonCheck, setBizButtonCheck] = useState(true); //사업자번호 유효버튼 클릭여부
 	const [bizCheckResult, setBizCheckResult] = useState<string | null>(null); //조회후 결과 메세지
 
 
 	//*** 2. 사업자번호 확인 핸들들러(API)
 	const handleBisunissCheck = async () => {
+		setBizButtonCheck(true); //사업자번호 유효버튼 클릭함
+
 		const total = await fetchBusinessCheck(partner?.businessRegistrationNo ?? '');
-		setBusinessCheck(total > 0 ? true : false);
-		setBizButtonCheck(true);
-		setBizCheckResult(total > 0 ? '유효한 사업자입니다' : '유효하지 않습니다. 다시 입력후 조회해 주세요.');
+		if (total > 0) {
+			setBusinessCheck(true);  //사업자번호 사용가능
+			setBizCheckResult('유효한 사업자입니다'); //유효버튼 조회후 결과 메세지
+		} else {
+			setBusinessCheck(false); //사업자번호 사용불능
+			setBizCheckResult('유효하지 않습니다. 다시 입력후 조회해 주세요.'); //유효버튼 조회후 결과 메세지
+		}
 	};
+
+	//*** 2. 사업자번호 change시 
+	const handleBusinessChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const value = e.target.value; //사업자번호
+		setPartner(prev => ({ ...prev!, businessRegistrationNo: e.target.value.replace(/\D/g, '') }))
+		setBusinessCheck(false); // 사업자번호 사용가능여부 초기화
+		setBizButtonCheck(false); // 사업자번호 조회버튼 클릭 여부
+	};
+
 
 	const [selectedOptionValue, setSelectedOptionValue] = useState<OptionType | null>(null);
 
@@ -86,23 +101,33 @@ export default function AdminPartnerEdit({ params }: { params: Promise<{ id: str
 	}, []);
 
 
+	//사업자 탈퇴버튼 핸들러
 	const handleDelete = async () => {
 		try {
 			if (confirm("정말 탈퇴 하시겠습니까?")) {
-				//사업자탈퇴 API 호출
-				const result = await deletePartner(partner?.partnerId ?? '');
-				if (result.success) {
-					alert(`사업자 정보를 탈퇴처리 하였습니다.`);
-					window.location.href = '../list'; //페이지 이동
+
+				const res = await checkDeletePartner(partner?.partnerId ?? '');
+				console.log("결과 : ", res.success);
+				
+				if (res.success) {
+					//사업자탈퇴 API 호출
+					const result = await deletePartner(partner?.partnerId ?? '');
+					if (result.success) {
+						alert(`사업자 정보를 탈퇴처리 하였습니다.`);
+						window.location.href = '../list'; //페이지 이동
+					} else {
+						alert(result.message);
+						return;
+					}
 				} else {
-					alert(result.message);
-					return;
+					alert(`사용중인 쿠폰이 있어서 사업자 탈퇴를 할수 없습니다.`);
 				}
 			}
 		} catch (err) {
 			alert('사업자 정보 탈퇴 실패');
 		}
 	}
+
 
 	//사업자수정 버튼 클릭 핸들러 (handleSubmit)
 	const handleSubmit = async () => {
@@ -111,6 +136,19 @@ export default function AdminPartnerEdit({ params }: { params: Promise<{ id: str
 				alert('상호명을 입력해주세요.');
 				return;
 			}
+			if (!businessRegex.test(partner?.businessRegistrationNo)) {
+				alert('사업자번호 10자리를 입력해주세요.');
+				return;
+			}
+			if (!bizButtonCheck) {
+				alert('사업자번호롤 조회해주세요.');
+				return;
+			}
+			if (!businessCheck && bizButtonCheck) {
+				alert('사업자번호가 유효하지 않습니다. 다시입력후 조회해주세요.');
+				return;
+			}
+
 			if ((partner?.partnerPassword || '').trim() && pwRe.trim()) {
 				if (!passwordRegex.test(partner?.partnerPassword || '')) { //비밀번호 검증	영문/숫자/특수문자 포함, 8자 이상
 					alert('비밀번호 형식이 올바르지 않습니다.\n(영문/숫자/특수문자 포함, 8자 이상)');

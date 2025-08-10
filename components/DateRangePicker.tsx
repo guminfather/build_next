@@ -71,16 +71,23 @@ const DateRangePicker = ({ startDate, endDate, onDateLoad }: Props) => {
         setShowCalendar(false);
     };
 
+    const clearDate = () => {
+    setSelectedRange(null);
+    onDateLoad("");
+  };
+
     return (
         <div className="relative inline-block" >
             <input
                 className="form-control form-control-solid w-100 mw-200px"
                 placeholder="Pick date range" id="kt_ecommerce_report_views_daterangepicker"
-                readOnly
+                autoComplete="off"   // 자동완성 끄기
                 value={formatDisplay(selectedRange)}
+                onChange={(e) => {
+                    if (e.target.value === "") clearDate(); // input에서 직접 지움
+                }}
                 onClick={() => setShowMenu((prev) => !prev)}
             />
-
 
             {/*input 뱍스 */}
             {showMenu && (

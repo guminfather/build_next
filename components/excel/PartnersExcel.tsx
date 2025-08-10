@@ -11,9 +11,10 @@ import { PartnerResponse } from '@/types/partner';
 type Props = {
     searchText?: string;
     searchType?: string;
+    sortType?: string;
 };
 
-export default function PartnersExcel<T>({ searchText, searchType }: Props) {
+export default function PartnersExcel<T>({ searchText, searchType, sortType }: Props) {
 
     const isDownloadingRef = useRef(false); // useRef 사용
 
@@ -22,6 +23,7 @@ export default function PartnersExcel<T>({ searchText, searchType }: Props) {
         pageSize: 0,             // 의미 없는 값
         searchText: searchText || "",
         searchType: searchType || "",
+        sortType: sortType || "",
         
     };
     

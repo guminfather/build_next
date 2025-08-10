@@ -11,10 +11,24 @@ export const SelectPartnerSearchOptions: OptionType[] = [
         { value: 'area', label: '지역' },
 ];
 
+export const SelectSortOptions: OptionType[] = [
+        { value: 'all', label: '정렬' },
+        { value: 'latest', label: '최신순' },
+        { value: 'oldest', label: '오래된순' },
+        { value: 'name', label: '상호순' },
+];
+
+export const SelectCouponSortOptions: OptionType[] = [
+        { value: 'all', label: '정렬' },
+        { value: 'usageDate', label: '사용기간' },
+        { value: 'name', label: '쿠폰명' },
+];
+
 export const SelectCouponSearchOptions: OptionType[] = [
         { value: 'all', label: '전체' },
         { value: 'name', label: '상호명' },
         { value: 'coupon', label: '쿠폰명' },
+        { value: 'id', label: '사업자아이디' },
 ];
 
 export const SelectCouponIssueSearchOptions: OptionType[] = [

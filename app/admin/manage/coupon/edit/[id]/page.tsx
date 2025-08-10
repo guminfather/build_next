@@ -6,7 +6,7 @@ import { Partner } from '@/types/partner';
 import { CouponResponse, CouponRequest, CouponProduct } from '@/types/coupon';
 import { hasText, rangeDate } from '@/utils/common';
 import { dateRegex, discountRegex } from '@/utils/regex';
-import { fetchAdminCouponDetail, updateCoupon, fetchPartnersAll, deleteCoupon } from '@/lib/apis/admin';
+import { fetchAdminCouponDetail, updateCoupon, fetchPartnersAll, deleteCoupon, checkDeleteCoupon } from '@/lib/apis/admin';
 
 import "../../../../../css/fullcalendar.bundle.css";
 import "../../../../../css/datatables.bundle.css";
@@ -64,13 +64,19 @@ export default function AdminCouponEdit({ params }: { params: Promise<{ id: stri
 	const handleDelete = async () => {
 		if (!confirm(" 쿠폰을 정말 삭제 하시겠습니까? ")) return;
 		try {
-			const result = await deleteCoupon(Number(id));
-			if (result.success) {
-				alert(`쿠폰을 삭제 하였습니다.`);
-				router.push(`../list`); //페이지 이동
+			const res = await checkDeleteCoupon(Number(id));
+			//console.log("결과 : " , res.success);
+			if (res.success) {
+				const result = await deleteCoupon(Number(id));
+				if (result.success) {
+					alert(`쿠폰을 삭제 하였습니다.`);
+					router.push(`../list`); //페이지 이동
+				} else {
+					alert(result.message);
+					return;
+				}
 			} else {
-				alert(result.message);
-				return;
+				alert(`사용중인 쿠폰이 있어서 삭제 할수 없습니다.`);
 			}
 		} catch (error) {
 			console.error("데이터 삭제 실패:", error);

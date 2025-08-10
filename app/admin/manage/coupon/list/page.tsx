@@ -6,8 +6,8 @@ import Select, { SingleValue } from 'react-select';
 
 import { CouponResponse } from '@/types/coupon';
 import { SearchCoupon } from '@/types/search';
-import { OptionType, SelectCouponSearchOptions, SelectCouponIsStateOptions } from '@/types/select';
-import { fetchAdminCoupons, deleteCoupons } from '@/lib/apis/admin';
+import { OptionType, SelectCouponSearchOptions, SelectCouponIsStateOptions, SelectCouponSortOptions } from '@/types/select';
+import { fetchAdminCoupons, deleteCoupons, checkDeleteCoupons } from '@/lib/apis/admin';
 import DateRangePicker from "@/components/DateRangePicker";
 
 import Pagination from '@/components/Pagination';
@@ -35,6 +35,7 @@ export default function AdminCoupons() {
     const [pageSize, setPageSize] = useState(10); //한페이지에 뿌려질 데이타
     const [searchText, setSearchText] = useState('');
     const [searchType, setSearchType] = useState('all');
+    const [sortType, setSortType] = useState('all');
     const [isState, setIsState] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
@@ -45,6 +46,7 @@ export default function AdminCoupons() {
         const query = new URLSearchParams({
             searchText: searchText || '',
             searchType: searchType || 'all',
+            sortType: sortType || 'all',
             isState: isState || '',
             startDate: startDate || '',
             endDate: endDate || '',
@@ -59,6 +61,7 @@ export default function AdminCoupons() {
         const query = new URLSearchParams({
             searchText: searchText || '',
             searchType: searchType || 'all',
+            sortType: sortType || 'all',
             isState: isState || '',
             startDate: startDate || '',
             endDate: endDate || '',
@@ -67,6 +70,22 @@ export default function AdminCoupons() {
         }).toString();
         window.location.href = `/admin/manage/coupon/list?${query}`;
     };
+
+    //정렬 변경시(검색)
+    const handleSortTypeChange = (selected: SingleValue<OptionType>) => {
+        const query = new URLSearchParams({
+            searchText: searchText || '',
+            searchType: searchType || 'all',
+            sortType: String(selected?.value) || 'all',
+            isState: isState || '',
+            startDate: startDate || '',
+            endDate: endDate || '',
+            page: String(1) || '1',
+            pageSize: String(pageSize) || '10',
+        }).toString();
+        window.location.href = `/admin/manage/coupon/list?${query}`;
+    };
+
 
     //검색버튼 클릭시 (재검색)
     const handleSearchSubmit = () => {
@@ -97,16 +116,28 @@ export default function AdminCoupons() {
         }
     };
 
-    //CouponTable 컴포넌트에서 delete 호출하면 실행(API연동및 재배열)
+    //쿠폰들 삭제 API 호출 
     const handleDeleteCoupons = async (ids: number[]) => {
-        const result = await deleteCoupons(ids); //api 호출
-        if (result.success) {
-            alert("쿠폰들을 삭제 하였습니다.");
-            handleSearchSubmit();
+        
+        //쿠폰 삭제 가능여부 확인
+        const res = await checkDeleteCoupons(ids); //api 호출
+        //console.log("결과 : " , res.success);
+        
+        //삭제가능
+        if(res.success) {
+            const result = await deleteCoupons(ids); //api 호출
+            if (result.success) {
+                alert("쿠폰들을 삭제 하였습니다.");
+                handleSearchSubmit();
+            } else {
+                console.log(result.message);
+            }
+        //사용하고 있는 쿠폰이 존재
         } else {
-            console.log(result.message);
+            alert(`사용중인 쿠폰이 있어서 삭제 할수 없습니다.`);
         }
     };
+
 
     //DateRangePicker 컴포넌트
     const handleOnDateLoad = async (rangeDate: String) => {
@@ -132,17 +163,28 @@ export default function AdminCoupons() {
         return SelectCouponIsStateOptions.find(option => option.value === isState);
     }, [isState]);
 
+
+    //정렬 selectbox default value
+    const selectedSortType = useMemo(() => {
+        return SelectCouponSortOptions.find(option => option.value === sortType);
+    }, [sortType]);
+    
+
+
+
     //데이타 로딩 함수호출
     useEffect(() => {
         const queryPage = parseInt(params?.get('page') || '1', 10);
         const queryPageSize = parseInt(params?.get('pageSize') || '10', 10);
         const querySearchText = params?.get('searchText') || '';
-        const querySearchType = params?.get('searchType') || '';
+        const querySearchType = params?.get('searchType') || 'all';
+        const querySortType = params?.get('sortType') || 'all';
         const queryIsState = params?.get('isState') || '';
         const queryStartDate = params?.get('startDate') || '';
         const queryEndDate = params?.get('endDate') || '';
         setSearchText(querySearchText);
         setSearchType(querySearchType);
+        setSortType(querySortType);
         setIsState(queryIsState);
         setStartDate(queryStartDate);
         setEndDate(queryEndDate);
@@ -155,20 +197,12 @@ export default function AdminCoupons() {
             pageSize: queryPageSize,
             searchText: querySearchText,
             searchType: querySearchType,
+            sortType: querySortType,
             isState: queryIsState,
             startDate: queryStartDate,
             endDate: queryEndDate
         });
     }, [params]);
-
-
-
-
-
-
-
-
-
 
 
 
@@ -204,27 +238,12 @@ export default function AdminCoupons() {
     };
     //함수
     const handleDelete = () => {
-        if (confirm("정말 삭제 하겠습니까?")) {
+        if (confirm("쿠폰을 정말 삭제 하겠습니까?")) {
             const couponIdsToDelete = selectedIds.map(i => coupons[i].couponId);
-            handleDeleteCoupons(couponIdsToDelete);
+            handleDeleteCoupons(couponIdsToDelete); //선택된 쿠폰 삭제하러 이동
             setSelectedIds([]);
         }
     };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -258,6 +277,7 @@ export default function AdminCoupons() {
                         <div className="card-header align-items-center py-5 gap-2 gap-md-5">
                             <div className="card-toolbar flex-row-fluid justify-content gap-5">
 
+                                {/*날짜검색*/}
                                 <DateRangePicker startDate={startDate} endDate={endDate} onDateLoad={handleOnDateLoad} />
                                 {/*<HorizontalDateRangePicker />*/}
                                 <div className="w-130px">
@@ -361,10 +381,53 @@ export default function AdminCoupons() {
                                     <button type="button" onClick={handleSearchSubmit} className="btn btn-outline text-nowrap">검색하기</button>
                                 </div>
                             </div>
-                            <div className="card-title">
+                            <div className="card-header  align-items-center justify-content gap-5">
+                                <div className="w-150px">
+                                    <Select<OptionType>
+                                        options={SelectCouponSortOptions}
+                                        placeholder="정렬"
+                                        value={selectedSortType}
+                                        isSearchable={false}
+                                        onChange={handleSortTypeChange}
+                                        theme={(theme) => ({
+                                            ...theme,
+                                            borderRadius: 5,
+                                            colors: {
+                                                ...theme.colors,
+                                                primary25: '#e9ecef',
+                                                primary: '#ECECEE',
+                                                neutral0: '#fff', //option 기본색(흰색)
+                                                neutral80: '#929191', //선택된 글자색
+                                            },
+                                        })}
+                                        styles={{
+                                            control: (base) => ({
+                                                ...base,
+                                                backgroundColor: '#F9F9F9',
+                                                borderColor: '#fff',
+                                                minHeight: '40px',
+                                                fontSize: '13px',
+                                            }),
+                                            option: (base, state) => ({
+                                                ...base,
+                                                backgroundColor: state.isSelected
+                                                    ? '#F7F7F6' //선택시 배경색
+                                                    : state.isFocused
+                                                        ? '#F7F7F6' //마우스오버시 배경색
+                                                        : 'transparent',
+                                                color: state.isSelected
+                                                    ? '#3E97FF' // 선택시 글자색
+                                                    : state.isFocused
+                                                        ? '#3E97FF' // hover 시 파란색 글자
+                                                        : '#808080', // 기본 글자색
+                                                fontWeight: 'normal',
+                                            }),
+                                        }}
+                                    />
+                                </div>
                                 <div className="d-flex align-items-center position-relative my-1">
                                     {/*--- 엑셀 다운로드---- */}
-                                    <CouponsExcel searchText={searchText} searchType={searchType} isState={isState} startDate={startDate} endDate={endDate} />
+                                    <CouponsExcel searchText={searchText} searchType={searchType} sortType={sortType} isState={isState} startDate={startDate} endDate={endDate} />
                                 </div>
                                 <div id="kt_ecommerce_report_views_export" className="d-none"></div>
                             </div>
@@ -419,7 +482,8 @@ export default function AdminCoupons() {
                                                         </div>
                                                     </td>
                                                     <td className="text-start">
-                                                        {m.partnerName}
+                                                        <a className="text-hover-primary text-gray-600"
+                                                            href={"/admin/manage/coupon/list?searchText="+m.partnerId+"&searchType=id"}>{m.partnerName}</a>
                                                     </td>
                                                     <td className="text-start">
                                                         <Link className="text-hover-primary text-gray-600"
@@ -434,9 +498,10 @@ export default function AdminCoupons() {
                                                     <td data-bs-target="license">{m.downloadCnt}</td>
                                                     <td>{m.usedCnt}</td>
                                                     <td>
-                                                        {m.isState === "ING" ? <span className="badge fw-bold me-auto px-4 py-3 badge-light-primary ">진행중</span> : ""}
-                                                        {m.isState === "END" ? <span className="badge fw-bold me-auto px-4 py-3 badge-light">기간만료</span> : ""}
-                                                        {m.isState === "WAITING" ? <span className="badge fw-bold me-auto px-4 py-3 badge-light">대기중</span> : ""}
+                                                        {m.isState === "ING" && m.isUsable === "USABLE" ? <span className="badge fw-bold me-auto px-4 py-3 badge-light-primary ">진행중</span> : ""}
+                                                        {m.isState === "END" && m.isUsable === "USABLE" ? <span className="badge fw-bold me-auto px-4 py-3 badge-light">기간만료</span> : ""}
+                                                        {m.isState === "WAITING" && m.isUsable === "USABLE" ? <span className="badge fw-bold me-auto px-4 py-3 badge-light">대기중</span> : ""}
+                                                        {m.isUsable === "NOT_USABLE" ? <span className="badge fw-bold me-auto px-4 py-3 badge-light">사용불가</span> : ""}
                                                     </td>
                                                 </tr>
                                             ))}

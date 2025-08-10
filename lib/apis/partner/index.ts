@@ -53,6 +53,32 @@ export const deleteCoupons = async (couponIds: number[]) => {
     }
 };
 
+//쿠폰 삭제 가능여부
+export const checkDeleteCoupon = async (couponId: number) => {
+    try {
+        const resCheck = await axiosInstance.get(`/api/partner/coupon/deleteCheck/${couponId}`);
+        console.log(resCheck.data);
+        return { success: resCheck.data, value: "" };
+    } catch (error: any) {
+        const message = error.response?.data?.error || "서버 오류가 발생했습니다.";
+        console.log("에러메세지 : ", message);
+        return { success: false, message };
+    }
+};
+
+//쿠폰'들 삭제 가능여부
+export const checkDeleteCoupons = async (couponIds: number[]) => {
+    try {
+        const resCheck = await axiosInstance.get(`/api/partner/coupons/deleteCheck/${couponIds}`);
+        console.log(resCheck.data);
+        return { success: resCheck.data, value: "" };
+    } catch (error: any) {
+        const message = error.response?.data?.error || "서버 오류가 발생했습니다.";
+        console.log("에러메세지 : ", message);
+        return { success: false, message };
+    }
+};
+
 //사업자 쿠폰리스트 
 export const fetchPartnerCoupons = async (newSearch: Search) => {
     try {
@@ -121,6 +147,19 @@ export const deletePartner = async () => {
     try {
         const res = await axiosInstance.delete(`/api/partner`);
         return { success: true, value: "사업자 정보 탈퇴처리 성공" };
+    } catch (error: any) {
+        const message = error.response?.data?.error || "서버 오류가 발생했습니다.";
+        console.log("에러메세지 : ", message);
+        return { success: false, message };
+    }
+};
+
+//사업자 탈퇴 가능여부
+export const checkDeletePartner = async () => {
+    try {
+        const resCheck = await axiosInstance.get(`/api/partner/deleteCheck`);
+        console.log(resCheck.data);
+        return { success: resCheck.data, value: "" };
     } catch (error: any) {
         const message = error.response?.data?.error || "서버 오류가 발생했습니다.";
         console.log("에러메세지 : ", message);

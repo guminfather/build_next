@@ -6,7 +6,7 @@ import { useEffect, useState, useRef } from 'react';
 import { PartnerResponse, PartnerRequest } from '@/types/partner';
 import { OptionType, SelectBusinessTypeOptions } from '@/types/select';
 import { emailRegex, passwordRegex, phoneRegex } from '@/utils/regex';
-import { fetchPartnerDetail, updatePartner, deletePartner } from '@/lib/apis/partner';
+import { fetchPartnerDetail, updatePartner, deletePartner, checkDeletePartner } from '@/lib/apis/partner';
 import { getCookieBusinessId, removeBusinessTokensCookies } from '@/lib/businessAuth';
 
 
@@ -71,26 +71,34 @@ export default function PartnerEdit() {
 		
 	}, []);
 
-	
+	//사업자 탈퇴버튼 핸들러
 	const handleDelete = async () => {
 		try {
 			if(confirm("정말 탈퇴 하시겠습니까?")) {
-				//사업자탈퇴 API 호출
-				const result = await deletePartner();
-				if (result.success) {
-					alert(`사업자 정보를 탈퇴처리 하였습니다.`);
-					removeBusinessTokensCookies();
-					//setUser(null);
-					window.location.href = '/business/login'; //페이지 이동
+				
+				const res = await checkDeletePartner();
+				console.log("결과 : " , res.success);
+				
+				if (res.success) {
+					//사업자탈퇴 API 호출
+					const result = await deletePartner();
+					if (result.success) {
+						alert(`사업자 정보를 탈퇴처리 하였습니다.`);
+						removeBusinessTokensCookies();
+						//setUser(null);
+						window.location.href = '/business/login'; //페이지 이동
+					} else {
+						alert(result.message);
+						return;
+					}
 				} else {
-					alert(result.message);
-					return;
+					alert(`사용중인 쿠폰이 있어서 사업자 탈퇴를 할수 없습니다.`);
 				}
+				
 			}
 		} catch (err) {
 			alert('사업자 정보 탈퇴 실패');
 		}
-
 	}
 	//사업자수정 버튼 클릭 핸들러 (handleSubmit)
 	const handleSubmit = async () => {

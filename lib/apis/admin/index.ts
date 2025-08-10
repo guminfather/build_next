@@ -38,7 +38,7 @@ export const deleteCoupon = async (couponId: number) => {
     }
 };
 
-//쿠폰들 삭제
+//쿠폰'들 삭제
 export const deleteCoupons = async (couponIds: number[]) => {
     try {
         const res = await axiosInstance.delete(`/api/admin/coupons/${couponIds}`);
@@ -49,6 +49,35 @@ export const deleteCoupons = async (couponIds: number[]) => {
         return { success: false, message };
     }
 };
+
+//쿠폰 삭제 가능여부
+export const checkDeleteCoupon = async (couponId: number) => {
+    try {
+        const resCheck = await axiosInstance.get(`/api/admin/coupon/deleteCheck/${couponId}`);
+        console.log(resCheck.data);
+        return { success: resCheck.data, value: "" };
+    } catch (error: any) {
+        const message = error.response?.data?.error || "서버 오류가 발생했습니다.";
+        console.log("에러메세지 : ", message);
+        return { success: false, message };
+    }
+};
+
+//쿠폰'들 삭제 가능여부
+export const checkDeleteCoupons = async (couponIds: number[]) => {
+    try {
+        const resCheck = await axiosInstance.get(`/api/admin/coupons/deleteCheck/${couponIds}`);
+        console.log(resCheck.data);
+        return { success: resCheck.data, value: "" };
+    } catch (error: any) {
+        const message = error.response?.data?.error || "서버 오류가 발생했습니다.";
+        console.log("에러메세지 : ", message);
+        return { success: false, message };
+    }
+};
+
+
+
 
 
 // 관리자 쿠폰 리스트 (엑셀용)
@@ -170,6 +199,33 @@ export const deletePartners = async (partnerIds: string[]) => {
     try {
         const res = await axiosInstance.delete(`/api/admin/partners/${partnerIds}`);
         return { success: true, value: "사업자들 정보 탈퇴처리 성공" };
+    } catch (error: any) {
+        const message = error.response?.data?.error || "서버 오류가 발생했습니다.";
+        console.log("에러메세지 : ", message);
+        return { success: false, message };
+    }
+};
+
+
+//사업자 삭제 가능여부
+export const checkDeletePartner = async (partnerId: String) => {
+    try {
+        const resCheck = await axiosInstance.get(`/api/admin/partner/deleteCheck/${partnerId}`);
+        console.log(resCheck.data);
+        return { success: resCheck.data, value: "" };
+    } catch (error: any) {
+        const message = error.response?.data?.error || "서버 오류가 발생했습니다.";
+        console.log("에러메세지 : ", message);
+        return { success: false, message };
+    }
+};
+
+//사업자'들 삭제 가능여부
+export const checkDeletePartners = async (partnerIds: String[]) => {
+    try {
+        const resCheck = await axiosInstance.get(`/api/admin/partners/deleteCheck/${partnerIds}`);
+        console.log(resCheck.data);
+        return { success: resCheck.data, value: "" };
     } catch (error: any) {
         const message = error.response?.data?.error || "서버 오류가 발생했습니다.";
         console.log("에러메세지 : ", message);
