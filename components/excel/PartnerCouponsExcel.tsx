@@ -12,12 +12,13 @@ import { formatTwoDateWithDot } from '@/utils/common';
 type Props = {
     searchText?: string;
     searchType?: string;
+    sortType?: string;
     isState?: string;
     startDate?: string;
     endDate?: string;
 };
 
-export default function PartnerCouponsExcel<T>({ searchText, searchType, isState, startDate, endDate }: Props) {
+export default function PartnerCouponsExcel<T>({ searchText, searchType, sortType, isState, startDate, endDate }: Props) {
 
     const isDownloadingRef = useRef(false); // useRef 사용
     
@@ -26,6 +27,7 @@ export default function PartnerCouponsExcel<T>({ searchText, searchType, isState
         pageSize: 0,             // 의미 없는 값
         searchText: searchText || "",
         searchType: searchType || "",
+        sortType: sortType || "",
         isState: isState || "",
         startDate: startDate || "",
         endDate: endDate || ""

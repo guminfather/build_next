@@ -14,9 +14,10 @@ type Props = {
     searchText?: string;
     searchType?: string;
     isState?: string; //사용,미사용,기간만료
+    sortType?: string;
 };
 
-export default function CouponsIssueExcel<T>({ searchText, searchType, isState }: Props) {
+export default function CouponsIssueExcel<T>({ searchText, searchType, sortType, isState }: Props) {
 
     const isDownloadingRef = useRef(false); // useRef 사용
     
@@ -25,6 +26,7 @@ export default function CouponsIssueExcel<T>({ searchText, searchType, isState }
         pageSize: 0,             // 의미 없는 값
         searchText: searchText || "",
         searchType: searchType || "",
+        sortType: sortType || "all",
         isState: isState || "",
     };
     

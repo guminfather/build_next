@@ -267,7 +267,7 @@ export default function AdminCouponIssuelist() {
                             <div className="card-title">
                                 <div className="d-flex align-items-center position-relative my-1">
                                     {/*--- 엑셀 다운로드---- */
-                                    <CouponsIssueExcel searchText={searchText} searchType={searchType} isState={isState} />}
+                                    <CouponsIssueExcel searchText={searchText} searchType={searchType} sortType={sortType} isState={isState} />}
                                 </div>
                                 <div id="kt_ecommerce_report_views_export" className="d-none"></div>    
                             </div>

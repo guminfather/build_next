@@ -416,7 +416,7 @@ export default function BusinessCoupons() {
                                 </div>
                                 <div className="d-flex align-items-center position-relative my-1">
                                     {/*--- 엑셀 다운로드---- */}
-                                    <PartnerCouponsExcel searchText={searchText} searchType={searchType} isState={isState} startDate={startDate} endDate={endDate} />
+                                    <PartnerCouponsExcel searchText={searchText} searchType={searchType} sortType={sortType} isState={isState} startDate={startDate} endDate={endDate} />
                                 </div>
                                 <div id="kt_ecommerce_report_views_export" className="d-none"></div>
                             </div>
