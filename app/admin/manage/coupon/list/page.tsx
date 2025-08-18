@@ -486,10 +486,11 @@ export default function AdminCoupons() {
                                                             href={"/admin/manage/coupon/list?searchText="+m.partnerId+"&searchType=id"}>{m.partnerName}</a>
                                                     </td>
                                                     <td className="text-start">
+                                                        {/*pathname: `./${m.couponId}`,*/}
                                                         <Link className="text-hover-primary text-gray-600"
                                                             href={{
                                                                 pathname: `./edit/${m.couponId}`,
-                                                                query: { searchText, searchType, isState, startDate, endDate, page, pageSize },
+                                                                query: { searchText, searchType, sortType, isState, startDate, endDate, page, pageSize },
                                                             }}
                                                         >{m.couponName}</Link>
                                                     </td>

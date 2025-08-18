@@ -1,11 +1,8 @@
 import axios from "axios";
-import { getBusinessAccessToken } from '@/lib/businessAuth';
-import { getAdminAccessToken } from '@/lib/adminAuth';
-import { removeBusinessTokensCookies } from '@/lib/businessAuth';
-import { removeAdminTokensCookies } from '@/lib/adminAuth';
+import { getBusinessAccessToken, removeBusinessTokensCookies } from '@/lib/businessAuth';
+import { getAdminAccessToken,removeAdminTokensCookies } from '@/lib/adminAuth';
+import { API_BASE_URL } from '@/lib/config';
 
-//const API_BASE_URL = 'http://localhost:8080'; // API 서버 주소 (local)
-const API_BASE_URL = 'http://1.234.38.137:8080'; // API 서버 주소 (실 서 버)
 
 // axios 인스턴스 생성
 const axiosInstance = axios.create({

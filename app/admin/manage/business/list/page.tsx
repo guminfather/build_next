@@ -364,8 +364,10 @@ export default function AdminPartners() {
                                                                 />
                                                             </div>
                                                         </th>
-                                                        <th className="min-w-300px text-center">상호</th>
-                                                        <th className="min-w-200px text-center">사업자번호</th>
+                                                        <th className="min-w-100px text-center">상호</th>
+                                                        <th className="min-w-200px text-center">주소</th>
+                                                        <th className="min-w-100px text-center">연락처</th>
+                                                        <th className="min-w-100px text-center">사업자번호</th>
                                                         <th className="min-w-100px text-center">사업분야</th>
                                                         <th className="min-w-100px text-center">지역</th>
                                                     </tr>
@@ -373,7 +375,8 @@ export default function AdminPartners() {
                                                 <tbody className="fw-semibold text-gray-600">
                                                     {/*{(currentPage - 1) * pageSize + i + 1} ---- 총 {total}명 */}
                                                     {partners.map((m, i) => (
-                                                        <tr className="text-center"  key={i}>
+                                                        <tr className="text-center" key={i}>
+                                                            
                                                             <td>
                                                                 <div className="form-check form-check-sm form-check-custom form-check-solid">
                                                                     <input
@@ -393,6 +396,8 @@ export default function AdminPartners() {
                                                                 >{m.partnerName}
                                                                 </Link>
                                                             </td>
+                                                            <td className="text-start">{m.address} {m.addressDetail}</td>
+                                                            <td>{m.phone}</td>
                                                             <td>{m.businessRegistrationNo}</td>
                                                             <td>{m.businessType}</td>
                                                             <td>{m.address.slice(0, 2)}</td>
